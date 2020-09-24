@@ -1,5 +1,5 @@
 # Solicitud-Becas
-Brindar una herramienta que permita a la Coordinación de Formación de Capital Humano  mejorar el proceso de evaluación de becas, desde la recepción de solicitudes, hasta la emisión de reportes.
+Brindar una herramienta que permita a la Coordinación y Evaluación de la Formación de Capital Humano para optimizar el proceso de asignación de becas por parte del I2T2, desde la recepción de solicitudes, hasta la emisión de reportes. 
 
 # Tech Specifications
 ## Client
