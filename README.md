@@ -1,4 +1,5 @@
-# Solicitud de Becas
+# Solicitud-Becas
+Brindar una herramienta que permita a la Coordinación y Evaluación de la Formación de Capital Humano para optimizar el proceso de asignación de becas por parte del I2T2, desde la recepción de solicitudes, hasta la emisión de reportes. 
 
 Aplicación para la gestión de las solicitudes de becas de cada convocatoria
 por parte del I2T2
