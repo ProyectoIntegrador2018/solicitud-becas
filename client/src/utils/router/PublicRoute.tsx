@@ -1,10 +1,10 @@
 import React from 'react';
 import { Redirect, Route, RouteProps, useLocation } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
 const PublicRoute: React.FC<RouteProps> = (props: RouteProps) => {
   const { ...routeProps } = props;
-  const authenticated = false;
-  const loading = false;
+  const { authenticated, loading } = useAuth();
   const location = useLocation<any>();
 
   if (loading) {
