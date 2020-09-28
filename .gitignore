@@ -6,6 +6,15 @@
 /.pnp
 .pnp.js
 
+# client git ignores
+client/node_modules
+
+# server git ignores
+server/node_modules
+# ignore the folder where tsc outputs the transpiled ts
+server/build
+
+
 # testing
 /coverage
 
