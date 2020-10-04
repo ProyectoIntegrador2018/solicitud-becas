@@ -1,10 +1,10 @@
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
 const PrivateRoute: React.FC<RouteProps> = (props: RouteProps) => {
   const { ...routeProps } = props;
-  const authenticated = true;
-  const loading = false;
+  const { authenticated, loading } = useAuth();
 
   if (loading) {
     return <div>Cargando...</div>;
