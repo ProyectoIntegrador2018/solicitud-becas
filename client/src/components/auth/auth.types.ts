@@ -1,7 +1,14 @@
 export interface IUser {
   name: string;
   last_name: string;
-  id: number;
+  googleProfile: {
+    googleId: string;
+    imageUrl: string;
+    email: string;
+    name: string;
+    givenName: string;
+    familyName: string;
+  };
 }
 
 export interface IAuthContext {

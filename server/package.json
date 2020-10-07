@@ -4,10 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly ./app.ts",
-    "prod": "tsc && node ./build/app.js"
+    "test": "jest",
+    "build": "tsc",
+    "dev": "ts-node-dev app.ts --respawn --transpileOnly",
+    "prod": "tsc && node ./server_build/app.js"
   },
   "author": "",
   "license": "UNLICENSED",
@@ -16,5 +16,30 @@
     "express": "^4.17.1",
     "ts-node-dev": "^1.0.0-pre.63",
     "typescript": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/supertest": "^2.0.10",
+    "jest": "^26.5.2",
+    "supertest": "^5.0.0",
+    "ts-jest": "^26.4.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/tests/*.+(ts|tsx|js)"
+    ],
+    "preset": "ts-jest"
   }
 }

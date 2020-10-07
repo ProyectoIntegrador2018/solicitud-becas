@@ -1,0 +1,16 @@
+#+TITLE: Deployment
+
+
+* Deployments
+
+** Heroku details
+    *** Building
+
+    App is built in heroku by searching for a ~build~ script in ~package.json~
+
+    https://devcenter.heroku.com/articles/nodejs-support#customizing-the-build-process
+
+    *** Running
+    Process starts with the command defined in the ~Procfile~
+
+    https://devcenter.heroku.com/articles/preparing-a-codebase-for-heroku-deployment#3-add-a-procfile
