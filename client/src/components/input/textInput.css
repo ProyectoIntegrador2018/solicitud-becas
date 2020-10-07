@@ -1,0 +1,31 @@
+.text-input {
+  outline: none;
+  -webkit-box-sizing: border-box;
+  width: 40%;
+  box-sizing: border-box;
+  border: 2px solid #a1a1a1;
+  border-radius: 5px;
+  padding: 9px 12px;
+  color: #7c7c7c;
+  background-color: transparent;
+  font-size: inherit;
+  line-height: 36px;
+  caret-color: #7c7c7c;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  transition: border 0.2s, box-shadow 0.2s, -webkit-box-shadow 0.2s;
+}
+.text-input--large {
+  width: 80%;
+}
+.text-input--med {
+  width: 60%;
+}
+.text-input--fat {
+  width: 100%;
+  height: 150px;
+}
+.text-input:focus {
+  border-color: rgb(40, 144, 185);
+  box-shadow: inset 2px 1px 8px #a1a1a1;
+}

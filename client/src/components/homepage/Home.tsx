@@ -1,0 +1,33 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import PrimaryButton from '../buttons/PrimaryButton';
+import SecondaryButton from '../buttons/SecondaryButton';
+import './home.css';
+import TextInput from '../input/TextInput';
+
+const Home: React.FC = () => {
+  return (
+    <main className="layout">
+      <div className="home-layout">
+        <Link to="/registrar-areas">
+          <PrimaryButton
+            text="Botón primario --> click para form registro de areas"
+            handleClick={() => console.log('click primario')}
+          />
+        </Link>
+        <Link to="/crear-convocatoria">
+          <SecondaryButton text="Botón secundario --> click para form convocatoria" />
+        </Link>
+        <Link to="/iniciar-sesion">
+          <PrimaryButton
+            text="Botón primario --> click para login (no se puede, ya estas autenticado)"
+            handleClick={() => console.log('click primario')}
+          />
+        </Link>
+        <TextInput id="prueba" placeholder="Un placeholder..." />
+      </div>
+    </main>
+  );
+};
+
+export default Home;

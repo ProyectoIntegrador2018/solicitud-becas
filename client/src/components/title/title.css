@@ -1,0 +1,29 @@
+.title-1 {
+  color: rgb(112, 109, 109);
+  padding: 16px 0;
+  border-bottom: 1px solid #d63d3b;
+  font-weight: 700;
+  font-size: 48px;
+}
+.title-2 {
+  border-bottom: 1px solid #d63d3b;
+  padding: 16px 0;
+  font-size: 32px;
+  font-weight: 600;
+  color: rgb(112, 109, 109);
+}
+.title-3 {
+  color: rgb(112, 109, 109);
+  font-weight: 500;
+  font-size: 24px;
+}
+.title-4 {
+  color: rgb(112, 109, 109);
+  font-weight: 500;
+  font-size: 16px;
+}
+.title-5 {
+  color: rgb(112, 109, 109);
+  font-style: italic;
+  font-size: 16px;
+}

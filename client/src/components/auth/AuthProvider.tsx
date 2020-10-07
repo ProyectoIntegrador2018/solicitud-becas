@@ -11,7 +11,8 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
   const initialAuthState = {
     user: null,
     authenticated: false,
-    loading: true,
+    // loading: true,
+    loading: false,
   };
 
   const [state, setState] = useState<IAuthState>(initialAuthState);
@@ -29,7 +30,7 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
     // API get call para user
     setState({
       user: null,
-      authenticated: false,
+      authenticated: true,
       loading: false,
     });
   };
