@@ -5,10 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "jest",
-    "tsc": "tsc",
+    "build": "tsc",
     "dev": "ts-node-dev app.ts --respawn --transpileOnly",
-    "prod": "tsc && node ./build/app.js",
-    "tsjestconfig": "ts-jest config:migrate package.json"
+    "prod": "tsc && node ./server_build/app.js"
   },
   "author": "",
   "license": "UNLICENSED",

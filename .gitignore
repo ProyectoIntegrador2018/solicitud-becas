@@ -12,7 +12,8 @@ client/node_modules
 # server git ignores
 server/node_modules
 # ignore the folder where tsc outputs the transpiled ts
-server/build
+server/server_build
+server/client_build
 
 
 # testing
