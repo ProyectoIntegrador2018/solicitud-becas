@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig",
+    // exclude files that are in the tests folder for prod build, since they are
+    // devDependencies anyways, the build would fail in a prod environment (e.g. Heroku)
+  "exclude": ["/tests/**/*"]
+}
