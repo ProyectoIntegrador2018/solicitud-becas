@@ -4,11 +4,15 @@ import PrimaryButton from '../buttons/PrimaryButton';
 import SecondaryButton from '../buttons/SecondaryButton';
 import './home.css';
 import TextInput from '../input/TextInput';
+import useAuth from '../../utils/hooks/useAuth';
+import Title from '../title/Title';
 
 const Home: React.FC = () => {
+  const { user } = useAuth();
   return (
     <main className="layout">
       <div className="home-layout">
+        <Title text={user.name} size={1} />
         <Link to="/registrar-areas">
           <PrimaryButton
             text="Botón primario --> click para form registro de areas"

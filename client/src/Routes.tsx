@@ -8,17 +8,11 @@ import Home from './components/homepage/Home';
 import PrivateRoute from './utils/router/PrivateRoute';
 import CreateConvening from './components/convention/create/CreateConvening';
 
-// this is a component just to make sure that we are deploying correctly,
-// when there's something to show at the beginning we should remove this
-const HelloComponent: React.FC = () => {
-  return <div>Hola !</div>;
-};
-
 const Routes: React.FC = () => {
-  // const { fetchUser } = useAuth();
+  // const { login } = useAuth();
 
   useEffect(() => {
-    // fetchUser();
+    // login();
     // eslint-disable-next-line
   }, []);
 

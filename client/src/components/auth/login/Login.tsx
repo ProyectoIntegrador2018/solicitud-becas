@@ -1,13 +1,12 @@
 import React from 'react';
 import useAuth from '../../../utils/hooks/useAuth';
 import Title from '../../title/Title';
-import PrimaryButton from '../../buttons/PrimaryButton';
-import TextInput from '../../input/TextInput';
+import GoogleButton from '../google/GoogleButton';
 import './login.css';
 import FieldLabel from '../../labels/field-label/FieldLabel';
 
 const Login: React.FC = () => {
-  const { loading, fetchUser } = useAuth();
+  const { loading } = useAuth();
   if (loading) return <div>Cargando...</div>;
   return (
     <main className="layout">
@@ -16,11 +15,8 @@ const Login: React.FC = () => {
           <Title size={1} text="¡Bienvenido!" />
         </div>
         <div className="login-actions">
-          <div className="login-email">
-            <FieldLabel text="Ingresa con tu gmail" htmlFor="email" />
-            <TextInput placeholder="ejemplo@gmail.com" id="email" size="l" />
-          </div>
-          <PrimaryButton text="Iniciar Sesión" type="submit" handleClick={fetchUser} />
+          <FieldLabel text="Ingresa con tu cuenta de Google" htmlFor="email" />
+          <GoogleButton />
         </div>
       </div>
     </main>
