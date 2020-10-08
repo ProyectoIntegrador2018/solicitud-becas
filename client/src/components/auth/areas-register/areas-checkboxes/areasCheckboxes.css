@@ -1,0 +1,9 @@
+.areas-checkboxes {
+  column-count: 1;
+  list-style: none;
+}
+@media (min-width: 767px) {
+  .areas-checkboxes {
+    column-count: 3;
+  }
+}

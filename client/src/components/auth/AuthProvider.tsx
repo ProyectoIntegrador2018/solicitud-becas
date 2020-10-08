@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { IAuthContext, IAuthState } from './auth.types';
+import { GoogleLoginResponse } from 'react-google-login';
 
 interface IProps {
   children: React.ReactNode;
@@ -11,7 +12,8 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
   const initialAuthState = {
     user: null,
     authenticated: false,
-    loading: true,
+    loading: false,
+    accessToken: '',
   };
 
   const [state, setState] = useState<IAuthState>(initialAuthState);
@@ -22,22 +24,30 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
       user: null,
       authenticated: false,
       loading: false,
+      accessToken: '',
     });
   };
 
-  const fetchUser = () => {
+  const login = (response: GoogleLoginResponse) => {
+    const { profileObj, accessToken } = response;
+    console.log(profileObj);
     // API get call para user
-    setState({
-      user: null,
-      authenticated: false,
-      loading: false,
-    });
+    if (accessToken) {
+      setState({
+        user: profileObj,
+        authenticated: true,
+        loading: false,
+        accessToken,
+      });
+    } else {
+      logout();
+    }
   };
 
   const context = {
     ...state,
     logout,
-    fetchUser,
+    login,
   };
 
   return <Context.Provider value={context}>{children}</Context.Provider>;

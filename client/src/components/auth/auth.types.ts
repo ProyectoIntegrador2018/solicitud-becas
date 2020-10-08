@@ -1,26 +1,26 @@
-export interface IUser {
+import { GoogleLoginResponse } from 'react-google-login';
+
+export interface IGoogleUser {
+  googleId: string;
+  imageUrl: string;
+  email: string;
   name: string;
-  last_name: string;
-  googleProfile: {
-    googleId: string;
-    imageUrl: string;
-    email: string;
-    name: string;
-    givenName: string;
-    familyName: string;
-  };
+  givenName: string;
+  familyName: string;
 }
 
 export interface IAuthContext {
-  user: IUser;
+  user: IGoogleUser;
   authenticated: boolean;
   loading: boolean;
+  accessToken: string;
   logout: () => void;
-  fetchUser: () => void;
+  login: (response: GoogleLoginResponse) => void;
 }
 
 export interface IAuthState {
-  user: IUser;
+  user: IGoogleUser;
   authenticated: boolean;
   loading: boolean;
+  accessToken: string;
 }
