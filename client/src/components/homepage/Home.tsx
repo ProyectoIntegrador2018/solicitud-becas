@@ -28,10 +28,10 @@ const Home: React.FC = () => {
             handleClick={() => console.log('click primario')}
           />
         </Link>
-        <Link to="/admin">
+        <Link to="/admin/home">
           <PrimaryButton text="Admin homepage" />
         </Link>
-        <Link to="/evaluador">
+        <Link to="/evaluador/home">
           <PrimaryButton text="Evaluador homepage" />
         </Link>
         <TextInput id="prueba" placeholder="Un placeholder..." />
