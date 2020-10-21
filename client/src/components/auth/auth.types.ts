@@ -11,6 +11,8 @@ export interface IGoogleUser {
 
 export interface IAuthContext {
   user: IGoogleUser;
+  admin: boolean;
+  evaluator: boolean;
   authenticated: boolean;
   loading: boolean;
   accessToken: string;
@@ -20,6 +22,8 @@ export interface IAuthContext {
 
 export interface IAuthState {
   user: IGoogleUser;
+  admin: boolean;
+  evaluator: boolean;
   authenticated: boolean;
   loading: boolean;
   accessToken: string;

@@ -9,14 +9,25 @@
   box-shadow: 0px 5px 16px #a1a1a1;
   margin: 2rem 0.5rem;
 }
+@media (min-width: 767px) {
+  .createConvening-layout {
+    margin: 2rem 8rem;
+  }
+}
+@media (min-width: 1023px) {
+  .createConvening-layout {
+    margin: 2rem 16rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .createConvening-layout {
+    margin: 2rem 24rem;
+  }
+}
 .createConvening-content {
   margin-top: 5rem;
   width: 100%;
-  flex-direction: column;
-  align-items: center;
-}
-.createConvening-name {
-  display: flex;
   flex-direction: column;
   align-items: center;
 }
@@ -29,24 +40,38 @@
   margin-bottom: 2rem;
 }
 
-.createConvening-fatInput {
+.createConvening-date {
+  border: 1px solid rgb(192, 190, 190);
+  border-radius: 5px;
   display: flex;
-  width: 40%;
+  width: 90%;
   flex-direction: column;
   align-items: center;
   padding: 30px 10px;
 }
-.createConvening-fatInputs {
+.createConvening-dates {
   width: 100%;
   display: flex;
-  justify-content: center;
-  margin-bottom: 4rem;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 600px) {
+  .createConvening-dates {
+    flex-direction: row;
+  }
+  .createConvening-date {
+    /* flex-direction: row; */
+    width: 40%;
+  }
 }
 
 .createConvening-buttons {
   display: flex;
   justify-content: center;
-  margin-top: 4rem;
+  margin: 2rem 0;
 }
 .createConvening-buttons > button {
   margin: 0 15px;

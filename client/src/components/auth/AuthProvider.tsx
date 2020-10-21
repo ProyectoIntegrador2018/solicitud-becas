@@ -12,6 +12,8 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
   const initialAuthState = {
     user: null,
     authenticated: false,
+    admin: false,
+    evaluator: false,
     loading: false,
     accessToken: '',
   };
@@ -23,6 +25,8 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
     setState({
       user: null,
       authenticated: false,
+      admin: false,
+      evaluator: false,
       loading: false,
       accessToken: '',
     });
@@ -36,6 +40,8 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
       setState({
         user: profileObj,
         authenticated: true,
+        admin: true,
+        evaluator: true,
         loading: false,
         accessToken,
       });
