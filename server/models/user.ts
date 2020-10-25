@@ -3,18 +3,25 @@
 import sequelize from "./index";
 import { Model, DataTypes } from "sequelize";
 
-class User extends Model {}
+export default class User extends Model {}
 
 User.init(
   {
-    // Model attributes are defined here
-    firstName: {
+    googleId: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+    },
+    givenName: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    lastName: {
+    familyName: {
       type: DataTypes.STRING,
-      // allowNull defaults to true
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {
@@ -23,3 +30,5 @@ User.init(
     modelName: "User", // We need to choose the model name
   }
 );
+
+// User.sync({ force: true });

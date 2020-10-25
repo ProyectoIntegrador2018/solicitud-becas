@@ -30,7 +30,6 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
 
   const login = (response: GoogleLoginResponse) => {
     const { profileObj, accessToken } = response;
-    console.log(profileObj);
     // API get call para user
     if (accessToken) {
       setState({
