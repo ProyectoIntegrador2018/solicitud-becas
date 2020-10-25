@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --forceExit",
     "dev": "ts-node-dev app.ts --respawn --transpileOnly",
     "build": "tsc --project tsconfig.prod.json",
     "prod": "tsc --project tsconfig.prod.json && node ./server_build/app.js"
@@ -15,6 +15,7 @@
     "@types/express": "^4.17.8",
     "@types/supertest": "^2.0.10",
     "express": "^4.17.1",
+    "google-auth-library": "^6.1.2",
     "jest": "^26.5.2",
     "pg": "^8.4.1",
     "sequelize": "^6.3.5",
@@ -47,6 +48,9 @@
     },
     "testMatch": [
       "**/tests/*.+(ts|tsx|js)"
+    ],
+    "testPathIgnorePatterns": [
+      ".*server_build.*"
     ],
     "preset": "ts-jest"
   }

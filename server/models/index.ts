@@ -4,12 +4,14 @@ import { Sequelize } from "sequelize";
 
 const node_env = process.env.NODE_ENV || "development";
 
-const config = require(__dirname + "/../config/config.js")[node_env];
+import config from "../config/config";
+
+const configJson = config[node_env];
 
 const DB_URI =
-  node_env === "development"
-    ? config.url
-    : process.env[config.use_env_variable];
+  node_env === "production"
+    ? process.env[configJson.use_env_variable]
+    : configJson.url;
 
 if (DB_URI === undefined) {
   throw new Error("DB_URI should not be undefined !");

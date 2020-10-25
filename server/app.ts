@@ -31,18 +31,6 @@ type UserLogIn = {
 // Create a new express application instance
 const app: express.Application = express();
 
-const clientIndexPath = path.join(__dirname, "../client_build", "index.html");
-
-let port = process.env.PORT;
-if (port == null || port == "") {
-  port = "8080";
-}
-
-const server = app.listen(port, function () {
-  console.log(`Example app listening on port ${port}!`);
-  console.log("client app index.html path: ", clientIndexPath);
-});
-
 app.use(express.json());
 
 app.post("/user-log-in", async function (req, res) {
@@ -100,6 +88,18 @@ app.use(express.static(path.join(__dirname, "../client_build")));
 
 app.get("/*", function (_req, res) {
   res.sendFile(clientIndexPath);
+});
+
+const clientIndexPath = path.join(__dirname, "../client_build", "index.html");
+
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = "8080";
+}
+
+const server = app.listen(port, function () {
+  console.log(`Example app listening on port ${port}!`);
+  console.log("client app index.html path: ", clientIndexPath);
 });
 
 export default server;

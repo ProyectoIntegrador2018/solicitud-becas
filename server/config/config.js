@@ -11,6 +11,11 @@ module.exports = {
     // `source .sequelize_env` to modify the environment
     use_env_variable: "DATABASE_URL",
   },
+  test: {
+    url: "postgres://postgres:becas@127.0.0.1:5432/database_development",
+    dialect: "postgres",
+    use_env_variable: "DATABASE_URL",
+  },
   production: {
     dialect: "postgres",
     use_env_variable: "DATABASE_URL",
