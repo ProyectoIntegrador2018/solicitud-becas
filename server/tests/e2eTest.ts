@@ -45,3 +45,35 @@ describe("users endpoint", () => {
     expect(response.status).toBe(200);
   });
 });
+
+describe("auth-emails endpoint", () => {
+  it("POST, DELETE, GET sequence of requests", async () => {
+    const EMAILS = ["user1@mail.com", "user2@mail.com", "user3@mail.com"];
+
+    const postResponse = await request(server)
+      .post("/auth-emails")
+      .send(EMAILS);
+
+    expect(postResponse.body).toMatchObject(
+      EMAILS.map((e) => ({
+        email: e,
+      }))
+    );
+
+    // DELETE one existing and one nonexisting email
+    const deleteResponse = await request(server)
+      .delete("/auth-emails")
+      .send(["user2@mail.com", "user4@mail.com"]);
+
+    expect(deleteResponse.body).toEqual({ emailsRemoved: 1 });
+
+    const getResponse = await request(server).get("/auth-emails");
+
+    // the user2 mail is now missing
+    expect(getResponse.body).toMatchObject(
+      ["user1@mail.com", "user3@mail.com"].map((e) => ({
+        email: e,
+      }))
+    );
+  });
+});
