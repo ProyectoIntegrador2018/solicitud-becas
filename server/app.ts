@@ -47,7 +47,12 @@ app.post("/user-log-in", async function (req, res) {
     return;
   }
 
-  // TODO: check that the email is one of the authorized ones
+  const authEmail = await AuthorizedEmail.findByPk(payload.email);
+  if (authEmail === null) {
+    res.status(401);
+    res.json({ reason: "email is not in the authorized list of emails" });
+    return;
+  }
 
   try {
     const [user, _wasCreated] = await User.findOrCreate({
