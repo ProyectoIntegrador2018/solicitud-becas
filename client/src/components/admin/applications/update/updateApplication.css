@@ -1,0 +1,45 @@
+.updateApplication-layout {
+  width: 100%;
+  text-align: center;
+  background: white;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0px 5px 16px #a1a1a1;
+  margin: 2rem 0.5rem;
+}
+@media (min-width: 767px) {
+  .updateApplication-layout {
+    margin: 2rem 8rem;
+  }
+}
+@media (min-width: 1023px) {
+  .updateApplication-layout {
+    margin: 2rem 16rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .updateApplication-layout {
+    margin: 2rem 24rem;
+  }
+}
+
+.updateApplication-name {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.updateApplication-buttons {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+.updateApplication-buttons > button {
+  margin: 0 15px;
+}

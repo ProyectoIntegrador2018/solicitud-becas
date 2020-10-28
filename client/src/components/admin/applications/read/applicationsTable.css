@@ -1,0 +1,24 @@
+.applicationsTable-layout {
+  align-self: center;
+  border-radius: 20px;
+  margin: auto 10px;
+  overflow: scroll;
+  -webkit-box-shadow: 0px 5px 16px #c2bdbd;
+  -moz-box-shadow: 0px 5px 16px #c2bdbd;
+  box-shadow: 0px 5px 16px #c2bdbd;
+}
+@media (min-width: 1320px) {
+  .applicationsTable-layout {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+@media (min-height: 80vh) {
+  .applicationsTable-layout {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+.applicationsTable-layout .Component-horizontalScrollContainer-12 {
+  padding: 10px 30px;
+}
