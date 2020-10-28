@@ -2,6 +2,7 @@ import express = require("express");
 import path from "path";
 import { OAuth2Client } from "google-auth-library";
 import User from "./models/user";
+import AuthorizedEmail from "./models/authorizedEmail";
 
 const CLIENT_ID =
   "401453194268-j77retfhpocjvd3lhrniu3c35asluk9s.apps.googleusercontent.com";
@@ -46,7 +47,12 @@ app.post("/user-log-in", async function (req, res) {
     return;
   }
 
-  // TODO: check that the email is one of the authorized ones
+  const authEmail = await AuthorizedEmail.findByPk(payload.email);
+  if (authEmail === null) {
+    res.status(401);
+    res.json({ reason: "email is not in the authorized list of emails" });
+    return;
+  }
 
   try {
     const [user, _wasCreated] = await User.findOrCreate({
@@ -78,6 +84,37 @@ app.get("/users/:id", async function (req, res) {
   const user = await User.findByPk(id);
 
   res.json(user);
+});
+
+app.post("/auth-emails", async function (req, res) {
+  const emails = (req.body as [string]).map((e) => ({
+    email: e,
+  }));
+
+  // AuthorizedEmail.bulkCreate(emails, { ignoreDuplicates: true });
+  let createdEmails = await AuthorizedEmail.bulkCreate(emails, {
+    // this is stupid but it seems to be the only way to make sequelize do what
+    // we want. The desired behavior is the following: if there is a duplicate,
+    // ignore it, if not, insert it with the correct createdAt/updatedAt dates.
+    // I tried `ignoreDuplicates` option, it didn't update duplicated values
+    // correctly, but it gave back the wrong createdAt/updatedAt dates
+    updateOnDuplicate: ["email"],
+  });
+
+  res.json(createdEmails);
+});
+
+app.get("/auth-emails", async function (_req, res) {
+  let emails = await AuthorizedEmail.findAll();
+  res.json(emails);
+});
+
+app.delete("/auth-emails", async function (req, res) {
+  let emails = req.body as [string];
+  let destroyedCount = await AuthorizedEmail.destroy({
+    where: { email: emails },
+  });
+  res.json({ emailsRemoved: destroyedCount });
 });
 
 // next lines are used to serve the built client app
