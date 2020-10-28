@@ -24,8 +24,9 @@ beforeAll(async () => {
   });
 });
 
-afterAll(async () => {
+afterAll((done) => {
   server.close();
+  done();
 });
 
 describe("users endpoint", () => {
@@ -75,5 +76,43 @@ describe("auth-emails endpoint", () => {
         email: e,
       }))
     );
+  });
+});
+
+describe("convocatorias endpoint", () => {
+  it("POST, GET, GET with ID, and DELETE sequence", async () => {
+    const convocatoria = {
+      id: "C-2020",
+      name: "Convocatoria 2020",
+      evaluationStartDate: "2020-10-27T20:09:41.740Z",
+      evaluationEndDate: "2020-10-28",
+    };
+
+    const expectedConvocatoria = {
+      evaluationEndDate: "2020-10-28",
+      evaluationStartDate: "2020-10-27",
+      id: "C-2020",
+      name: "Convocatoria 2020",
+    };
+
+    const postResponse = await request(server)
+      .post("/convocatorias")
+      .send(convocatoria);
+
+    expect(postResponse.body).toMatchObject(expectedConvocatoria);
+
+    const getListResponse = await request(server).get("/convocatorias");
+
+    expect(getListResponse.body.map((x) => x.id)).toMatchObject(["C-2020"]);
+
+    const getResponse = await request(server).get("/convocatorias/C-2020");
+
+    expect(getResponse.body).toMatchObject(expectedConvocatoria);
+
+    const deleteResponse = await request(server)
+      .delete("/convocatorias")
+      .send(["C-2020"]);
+
+    expect(deleteResponse.body).toEqual({ deleted: 1 });
   });
 });

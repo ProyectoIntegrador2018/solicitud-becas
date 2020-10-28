@@ -3,6 +3,7 @@ import path from "path";
 import { OAuth2Client } from "google-auth-library";
 import User from "./models/user";
 import AuthorizedEmail from "./models/authorizedEmail";
+import Convocatoria from "./models/convocatoria";
 
 const CLIENT_ID =
   "401453194268-j77retfhpocjvd3lhrniu3c35asluk9s.apps.googleusercontent.com";
@@ -80,9 +81,7 @@ app.get("/users", async function (req, res) {
 
 app.get("/users/:id", async function (req, res) {
   const id = req.params.id;
-
   const user = await User.findByPk(id);
-
   res.json(user);
 });
 
@@ -115,6 +114,47 @@ app.delete("/auth-emails", async function (req, res) {
     where: { email: emails },
   });
   res.json({ emailsRemoved: destroyedCount });
+});
+
+app.post("/convocatorias", async function (req, res) {
+  const convocatoria = req.body as Convocatoria;
+  try {
+    let createdConvocatoria = await Convocatoria.create(convocatoria);
+    res.json(createdConvocatoria);
+  } catch (e) {
+    res.status(500);
+    res.json(e);
+  }
+});
+
+app.patch("/convocatorias", async function (req, res) {
+  const convocatoria = req.body as Convocatoria;
+  try {
+    let updatedConvocatoria = await convocatoria.update(convocatoria);
+    res.json(updatedConvocatoria);
+  } catch (e) {
+    res.status(500);
+    res.json(e);
+  }
+});
+
+app.get("/convocatorias", async function (req, res) {
+  let convocatorias = await Convocatoria.findAll();
+  res.json(convocatorias);
+});
+
+app.get("/convocatorias/:id", async function (req, res) {
+  const id = req.params.id;
+  const convocatoria = await Convocatoria.findByPk(id);
+  res.json(convocatoria);
+});
+
+app.delete("/convocatorias", async function (req, res) {
+  let ids = req.body as [string];
+  let destroyedCount = await Convocatoria.destroy({
+    where: { id: ids },
+  });
+  res.json({ deleted: destroyedCount });
 });
 
 // next lines are used to serve the built client app
