@@ -9,17 +9,15 @@ const Login: React.FC = () => {
   const { loading } = useAuth();
   if (loading) return <div>Cargando...</div>;
   return (
-    <main className="layout">
-      <div className="login-layout">
-        <div className="login-title">
-          <Title size={1} text="¡Bienvenido!" />
-        </div>
-        <div className="login-actions">
-          <FieldLabel text="Ingresa con tu cuenta de Google" htmlFor="email" />
-          <GoogleButton />
-        </div>
+    <div className="login-layout">
+      <div className="login-title">
+        <Title size={1} text="¡Bienvenido!" />
       </div>
-    </main>
+      <div className="login-actions">
+        <FieldLabel text="Ingresa con tu cuenta de Google" htmlFor="email" />
+        <GoogleButton />
+      </div>
+    </div>
   );
 };
 

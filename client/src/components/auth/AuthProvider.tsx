@@ -10,9 +10,16 @@ export const Context = React.createContext<IAuthContext>(null);
 
 const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
   const initialAuthState = {
-    user: null,
-    authenticated: false,
-    admin: false,
+    user: {
+      googleId: 'prueba',
+      imageUrl: 'prueba',
+      email: 'prueba',
+      name: 'prueba',
+      givenName: 'prueba',
+      familyName: 'prueba',
+    },
+    authenticated: true,
+    admin: true,
     evaluator: false,
     loading: false,
     accessToken: '',

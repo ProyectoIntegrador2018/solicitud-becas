@@ -29,21 +29,19 @@ const AreasRegister: React.FC = () => {
   const history = useHistory();
   if (loading) return <div>Cargando...</div>;
   return (
-    <main className="layout">
-      <div className="areasRegister-layout">
-        <Title size={2} text="Registra tus areas" />
-        <div className="areasRegister-checkboxes">
-          <FieldLabel text="Selecciona las areas en las que participarás" htmlFor="email" />
-          <AreasCheckboxes areas={hardCodedOptions()} />
-        </div>
-        <div className="areasRegister-button">
-          <Title size={5} text="Nota: solo lo podrás hacer una vez" />
-          <span style={{ marginTop: '10px' }}>
-            <PrimaryButton text="Registrar" type="submit" handleClick={() => history.push('./')} />
-          </span>
-        </div>
+    <div className="areasRegister-layout">
+      <Title size={2} text="Registra tus areas" />
+      <div className="areasRegister-checkboxes">
+        <FieldLabel text="Selecciona las areas en las que participarás" htmlFor="email" />
+        <AreasCheckboxes areas={hardCodedOptions()} />
       </div>
-    </main>
+      <div className="areasRegister-button">
+        <Title size={5} text="Nota: solo lo podrás hacer una vez" />
+        <span style={{ marginTop: '10px' }}>
+          <PrimaryButton text="Registrar" type="submit" handleClick={() => history.push('./')} />
+        </span>
+      </div>
+    </div>
   );
 };
 

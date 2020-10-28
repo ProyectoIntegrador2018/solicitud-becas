@@ -10,33 +10,31 @@ import Title from '../title/Title';
 const Home: React.FC = () => {
   const { user } = useAuth();
   return (
-    <main className="layout">
-      <div className="home-layout">
-        <Title text={user.name} size={1} />
-        <Link to="/registrar-areas">
-          <PrimaryButton
-            text="Botón primario --> click para form registro de areas"
-            handleClick={() => console.log('click primario')}
-          />
-        </Link>
-        <Link to="/crear-convocatoria">
-          <SecondaryButton text="Botón secundario --> click para form convocatoria" />
-        </Link>
-        <Link to="/iniciar-sesion">
-          <PrimaryButton
-            text="Botón primario --> click para login (no se puede, ya estas autenticado)"
-            handleClick={() => console.log('click primario')}
-          />
-        </Link>
-        <Link to="/admin/home">
-          <PrimaryButton text="Admin homepage" />
-        </Link>
-        <Link to="/evaluador/home">
-          <PrimaryButton text="Evaluador homepage" />
-        </Link>
-        <TextInput id="prueba" placeholder="Un placeholder..." />
-      </div>
-    </main>
+    <div className="home-layout">
+      <Title text={user.name} size={1} />
+      <Link to="/registrar-areas">
+        <PrimaryButton
+          text="Botón primario --> click para form registro de areas"
+          handleClick={() => console.log('click primario')}
+        />
+      </Link>
+      <Link to="/crear-convocatoria">
+        <SecondaryButton text="Botón secundario --> click para form convocatoria" />
+      </Link>
+      <Link to="/iniciar-sesion">
+        <PrimaryButton
+          text="Botón primario --> click para login (no se puede, ya estas autenticado)"
+          handleClick={() => console.log('click primario')}
+        />
+      </Link>
+      <Link to="/admin/">
+        <PrimaryButton text="Admin homepage" />
+      </Link>
+      <Link to="/evaluador/">
+        <PrimaryButton text="Evaluador homepage" />
+      </Link>
+      <TextInput id="prueba" placeholder="Un placeholder..." />
+    </div>
   );
 };
 

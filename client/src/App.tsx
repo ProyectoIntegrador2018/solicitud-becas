@@ -10,7 +10,9 @@ const App: React.FC = () => {
       <AuthProvider>
         <ApolloProvider>
           <div className="header"></div>
-          <Routes />
+          <main className="layout">
+            <Routes />
+          </main>
           <div className="footer"></div>
         </ApolloProvider>
       </AuthProvider>
