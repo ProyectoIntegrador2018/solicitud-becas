@@ -143,21 +143,60 @@ describe("POST areas csv", () => {
 
     expect(postResponse.body).toMatchObject(expectedConvocatoria);
 
-    const filePostResponse = await request(server)
+    const areasCSVPostResponse = await request(server)
       .post("/convocatorias/C-2019/areas")
       .attach("some_file", "tests/areas.csv");
 
-    console.log(filePostResponse);
-    expect(filePostResponse).toMatchObject({});
-
     expect(
-      filePostResponse.body.map((x) => [x.id, x.name, x.convocatoriaId])
+      areasCSVPostResponse.body.map((x) => [x.id, x.name, x.convocatoriaId])
     ).toMatchObject([
       ["MA", "Mate", "C-2019"],
       ["CS", "Computación", "C-2019"],
       ["DE", "Deporte", "C-2019"],
       ["PH", "Física", "C-2019"],
       ["AR", "Arte", "C-2019"],
+    ]);
+
+    const solicitudesCSVPostResponse = await request(server)
+      .post("/convocatorias/C-2019/solicitudes")
+      .attach("some_file", "tests/solicitudes.csv")
+      .expect(200);
+
+    expect(
+      solicitudesCSVPostResponse.body.map((x) => [
+        x.id,
+        x.name,
+        x.areaId,
+        x.convocatoriaId,
+      ])
+    ).toMatchObject([
+      ["1", "Chuchito Perez", "MA", "C-2019"],
+      ["2", "Jose Perez", "MA", "C-2019"],
+      ["3", "Andres Perez", "CS", "C-2019"],
+      ["4", "Alex Perez", "PH", "C-2019"],
+      ["5", "Manuel Perez", "AR", "C-2019"],
+    ]);
+
+    const solicitudesGetResponse = await request(server).get("/solicitudes");
+
+    expect(
+      solicitudesGetResponse.body.map((x) => [
+        x.id,
+        x.name,
+        [x.area.id, x.area.name],
+        [x.convocatoria.id, x.convocatoria.name],
+      ])
+    ).toMatchObject([
+      ["5", "Manuel Perez", ["AR", "Arte"], ["C-2019", "Convocatoria 2019"]],
+      ["4", "Alex Perez", ["PH", "Física"], ["C-2019", "Convocatoria 2019"]],
+      [
+        "3",
+        "Andres Perez",
+        ["CS", "Computación"],
+        ["C-2019", "Convocatoria 2019"],
+      ],
+      ["2", "Jose Perez", ["MA", "Mate"], ["C-2019", "Convocatoria 2019"]],
+      ["1", "Chuchito Perez", ["MA", "Mate"], ["C-2019", "Convocatoria 2019"]],
     ]);
   });
 });

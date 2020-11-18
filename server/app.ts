@@ -181,6 +181,8 @@ app.delete("/convocatorias", async function (req, res) {
   res.json({ deleted: destroyedCount });
 });
 
+// THIS WILL FIRST REMOVE ALL AREAS RELATED TO THIS CONVOCATORIA, THEN IT WILL
+// ADD THE NEW AREAS
 app.post("/convocatorias/:id/areas", async function (req, res) {
   const id = req.params.id;
 
@@ -211,10 +213,86 @@ app.post("/convocatorias/:id/areas", async function (req, res) {
       convocatoriaId: id,
     }));
 
-    const createdAreas = await db.Area.bulkCreate(newAreas);
-
-    res.json(createdAreas);
+    try {
+      await convocatoria.removeAreas();
+      await db.Area.destroy({ where: { convocatoriaId: id } });
+      const createdAreas = await db.Area.bulkCreate(newAreas);
+      res.json(createdAreas);
+    } catch (e) {
+      console.error(e);
+      res.status(500); // Internal Server Error
+      res.json(e);
+    }
   });
+});
+
+app.post("/convocatorias/:id/solicitudes", async function (req, res) {
+  const id = req.params.id;
+
+  const convocatoria = await db.Convocatoria.findByPk(id);
+  if (!convocatoria) {
+    return res.status(400).send("Convocatoria doesn't exist for given id");
+  }
+
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("No files were uploaded.");
+  }
+
+  const first = Object.values(req.files)[0];
+
+  csvParse(first.data, async (err, records: Array<Array<any>>, info) => {
+    if (err) {
+      return res.status(400).send(`csv parser error: ${err}`);
+    }
+    if (records.length <= 1) {
+      return res.status(400).send("empty csv or csv with only a header");
+    }
+
+    const rows = records.slice(1);
+
+    const newSolicitudes = rows.map((r) => ({
+      id: String(r[0]).trim(),
+      name: String(r[1]).trim(),
+      areaId: String(r[2]).trim(),
+      convocatoriaId: id,
+    }));
+
+    try {
+      const createdSolicitudes = await db.Solicitud.bulkCreate(newSolicitudes);
+      res.json(createdSolicitudes);
+    } catch (e) {
+      console.error(e);
+      res.status(500); // Internal Server Error
+      res.json(e);
+    }
+  });
+});
+
+app.get("/solicitudes", async function (req, res) {
+  try {
+    const solicitudes = await db.Solicitud.findAll({
+      include: [db.Area, db.Convocatoria],
+    });
+    res.json(solicitudes);
+  } catch (e) {
+    console.error(e);
+    res.status(500); // Internal Server Error
+    res.json(e);
+  }
+});
+
+app.delete("/solicitudes", async function (req, res) {
+  try {
+    const ids = req.body as [string];
+    const destroyedCount = await db.Solicitud.destroy({
+      where: { id: ids },
+    });
+    res.json({ deleted: destroyedCount });
+  } catch (e) {
+    console.error(e);
+    res.status(500); // Internal Server Error
+    res.json(e);
+  }
 });
 
 // next lines are used to serve the built client app

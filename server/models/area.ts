@@ -6,6 +6,8 @@ import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize";
 export interface AreaAttributes {
   id: string;
   name: string;
+  // because of the relation
+  convocatoriaId: string;
 }
 
 export interface AreaModel extends Model<AreaAttributes>, AreaAttributes {}
@@ -27,35 +29,3 @@ export function AreaFactory(sequelize: Sequelize) {
     },
   });
 }
-
-// export interface AreaAttributes {
-//   id: string;
-//   name: string;
-// }
-
-// export default class Area extends Model<AreaAttributes> {
-//   public id!: string;
-//   public name!: string;
-
-//   public readonly createdAt!: Date;
-//   public readonly updatedAt!: Date;
-// }
-
-// Area.init(
-//   {
-//     id: {
-//       type: DataTypes.STRING,
-//       primaryKey: true,
-//       allowNull: false,
-//     },
-//     name: {
-//       type: DataTypes.STRING,
-//       allowNull: false,
-//     },
-//   },
-//   {
-//     // Other model options go here
-//     sequelize, // We need to pass the connection instance
-//     modelName: "Area", // We need to choose the model name
-//   }
-// );

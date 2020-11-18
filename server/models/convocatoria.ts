@@ -1,6 +1,14 @@
 "use strict";
 
-import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize";
+import {
+  Sequelize,
+  Model,
+  DataTypes,
+  BuildOptions,
+  HasManyRemoveAssociationsMixin,
+} from "sequelize";
+
+import { AreaModel } from "./area";
 
 export interface ConvocatoriaAttributes {
   id: string;
@@ -11,7 +19,9 @@ export interface ConvocatoriaAttributes {
 
 export interface ConvocatoriaModel
   extends Model<ConvocatoriaAttributes>,
-    ConvocatoriaAttributes {}
+    ConvocatoriaAttributes {
+  removeAreas: HasManyRemoveAssociationsMixin<AreaModel, string>;
+}
 
 export type ConvocatoriaStatic = typeof Model & {
   new (values?: object, options?: BuildOptions): ConvocatoriaModel;
