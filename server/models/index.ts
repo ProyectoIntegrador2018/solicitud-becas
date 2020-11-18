@@ -2,9 +2,25 @@
 
 import { Sequelize } from "sequelize";
 
-const node_env = process.env.NODE_ENV || "development";
+import { AreaFactory, AreaStatic } from "./area";
+import { ConvocatoriaFactory, ConvocatoriaStatic } from "./convocatoria";
+import { UserFactory, UserStatic } from "./user";
+import {
+  AuthorizedEmailFactory,
+  AuthorizedEmailStatic,
+} from "./authorizedEmail";
 
 import config from "../config/config";
+
+export interface DB {
+  sequelize: Sequelize;
+  Convocatoria: ConvocatoriaStatic;
+  Area: AreaStatic;
+  AuthorizedEmail: AuthorizedEmailStatic;
+  User: UserStatic;
+}
+
+const node_env = process.env.NODE_ENV || "development";
 
 const configJson = config[node_env];
 
@@ -19,4 +35,20 @@ if (DB_URI === undefined) {
 
 const sequelize = new Sequelize(DB_URI);
 
-export default sequelize;
+const Area = AreaFactory(sequelize);
+const Convocatoria = ConvocatoriaFactory(sequelize);
+const AuthorizedEmail = AuthorizedEmailFactory(sequelize);
+const User = UserFactory(sequelize);
+
+Convocatoria.hasMany(Area);
+Area.belongsTo(Convocatoria);
+
+export const db: DB = {
+  sequelize,
+  Area,
+  Convocatoria,
+  AuthorizedEmail,
+  User,
+};
+
+sequelize.sync({ force: true });

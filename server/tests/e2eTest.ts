@@ -2,8 +2,7 @@ import request from "supertest";
 
 import server from "../app";
 
-import User from "../models/user";
-import sequelize from "../models/index";
+import { db } from "../models/index";
 
 const testUser1 = {
   googleId: "2",
@@ -14,12 +13,12 @@ const testUser1 = {
 
 beforeAll(async () => {
   // drop tables and create them to start testing fresh
-  await sequelize.sync({ force: true });
+  await db.sequelize.sync({ force: true });
 
   // Unfortunately I didn't manage to find a way to test google login programatically
   // so we insert a test user instead
 
-  await User.bulkCreate([testUser1], {
+  await db.User.bulkCreate([testUser1], {
     validate: true,
   });
 });
@@ -86,6 +85,10 @@ describe("convocatorias endpoint", () => {
       name: "Convocatoria 2020",
       evaluationStartDate: "2020-10-27T20:09:41.740Z",
       evaluationEndDate: "2020-10-28",
+      areas: [
+        { id: "Q", name: "Quimica" },
+        { id: "M", name: "Matemáticas" },
+      ],
     };
 
     const expectedConvocatoria = {

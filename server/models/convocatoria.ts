@@ -1,7 +1,6 @@
 "use strict";
 
-import sequelize from "./index";
-import { Model, DataTypes } from "sequelize";
+import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize";
 
 export interface ConvocatoriaAttributes {
   id: string;
@@ -10,20 +9,16 @@ export interface ConvocatoriaAttributes {
   evaluationEndDate: Date;
 }
 
-export default class Convocatoria
-  extends Model<ConvocatoriaAttributes>
-  implements ConvocatoriaAttributes {
-  public id!: string;
-  public name!: string;
-  public evaluationStartDate!: Date;
-  public evaluationEndDate!: Date;
+export interface ConvocatoriaModel
+  extends Model<ConvocatoriaAttributes>,
+    ConvocatoriaAttributes {}
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-}
+export type ConvocatoriaStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): ConvocatoriaModel;
+};
 
-Convocatoria.init(
-  {
+export function ConvocatoriaFactory(sequelize: Sequelize) {
+  return <ConvocatoriaStatic>sequelize.define("convocatorias", {
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
@@ -35,18 +30,11 @@ Convocatoria.init(
     },
     evaluationStartDate: {
       type: DataTypes.DATEONLY,
-      // allowNull: false,
+      allowNull: false,
     },
     evaluationEndDate: {
       type: DataTypes.DATEONLY,
-      // allowNull: false,
+      allowNull: false,
     },
-  },
-  {
-    // Other model options go here
-    sequelize, // We need to pass the connection instance
-    modelName: "Convocatoria", // We need to choose the model name
-  }
-);
-
-Convocatoria.sync({ force: true });
+  });
+}

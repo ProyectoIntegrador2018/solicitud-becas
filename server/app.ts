@@ -1,9 +1,8 @@
 import express = require("express");
 import path from "path";
 import { OAuth2Client } from "google-auth-library";
-import User from "./models/user";
-import AuthorizedEmail from "./models/authorizedEmail";
-import Convocatoria from "./models/convocatoria";
+
+import { db } from "./models/index";
 
 const CLIENT_ID =
   "401453194268-j77retfhpocjvd3lhrniu3c35asluk9s.apps.googleusercontent.com";
@@ -48,7 +47,15 @@ app.post("/user-log-in", async function (req, res) {
     return;
   }
 
-  const authEmail = await AuthorizedEmail.findByPk(payload.email);
+  if (
+    payload.given_name === undefined ||
+    payload.family_name === undefined ||
+    payload.email === undefined
+  ) {
+    throw Error(`google's payload is incomplete: ${payload}`);
+  }
+
+  const authEmail = await db.AuthorizedEmail.findByPk(payload.email);
   if (authEmail === null) {
     res.status(401);
     res.json({ reason: "email is not in the authorized list of emails" });
@@ -56,7 +63,7 @@ app.post("/user-log-in", async function (req, res) {
   }
 
   try {
-    const [user, _wasCreated] = await User.findOrCreate({
+    const [user, _wasCreated] = await db.User.findOrCreate({
       where: { googleId: payload.sub },
       defaults: {
         googleId: payload.sub,
@@ -74,14 +81,14 @@ app.post("/user-log-in", async function (req, res) {
 });
 
 app.get("/users", async function (req, res) {
-  const users = await User.findAll();
+  const users = await db.User.findAll();
 
   res.json(users);
 });
 
 app.get("/users/:id", async function (req, res) {
   const id = req.params.id;
-  const user = await User.findByPk(id);
+  const user = await db.User.findByPk(id);
   res.json(user);
 });
 
@@ -91,7 +98,7 @@ app.post("/auth-emails", async function (req, res) {
   }));
 
   // AuthorizedEmail.bulkCreate(emails, { ignoreDuplicates: true });
-  let createdEmails = await AuthorizedEmail.bulkCreate(emails, {
+  let createdEmails = await db.AuthorizedEmail.bulkCreate(emails, {
     // this is stupid but it seems to be the only way to make sequelize do what
     // we want. The desired behavior is the following: if there is a duplicate,
     // ignore it, if not, insert it with the correct createdAt/updatedAt dates.
@@ -104,33 +111,51 @@ app.post("/auth-emails", async function (req, res) {
 });
 
 app.get("/auth-emails", async function (_req, res) {
-  let emails = await AuthorizedEmail.findAll();
+  let emails = await db.AuthorizedEmail.findAll();
   res.json(emails);
 });
 
 app.delete("/auth-emails", async function (req, res) {
   let emails = req.body as [string];
-  let destroyedCount = await AuthorizedEmail.destroy({
+  let destroyedCount = await db.AuthorizedEmail.destroy({
     where: { email: emails },
   });
   res.json({ emailsRemoved: destroyedCount });
 });
 
 app.post("/convocatorias", async function (req, res) {
-  const convocatoria = req.body as Convocatoria;
+  // const convocatoria = req.body as Convocatoria;
   try {
-    let createdConvocatoria = await Convocatoria.create(convocatoria);
+    const createdConvocatoria = await db.Convocatoria.create(req.body, {
+      include: db.Area,
+    });
+
     res.json(createdConvocatoria);
   } catch (e) {
+    console.log(e);
     res.status(500);
     res.json(e);
   }
 });
 
 app.patch("/convocatorias", async function (req, res) {
-  const convocatoria = req.body as Convocatoria;
+  // const convocatoria = req.body as Convocatoria;
   try {
-    let updatedConvocatoria = await convocatoria.update(convocatoria);
+    let updatedConvocatoria = await db.Convocatoria.update(req.body, {
+      where: req.body.id,
+    });
+
+    // const newAreas = convocatoria?.areas;
+    // const oldAreas = updatedConvocatoria?.areas;
+
+    // if (newAreas !== undefined && newAreas !== null) {
+    //   // if newAreas
+    //   const removed = oldAreas?.filter((oldA) => newAreas.includes(oldA)) ?? [];
+
+    //   await updatedConvocatoria.removeAreas(removed);
+    //   await updatedConvocatoria.setAreas(newAreas);
+    // }
+
     res.json(updatedConvocatoria);
   } catch (e) {
     res.status(500);
@@ -139,23 +164,33 @@ app.patch("/convocatorias", async function (req, res) {
 });
 
 app.get("/convocatorias", async function (req, res) {
-  let convocatorias = await Convocatoria.findAll();
-  res.json(convocatorias);
+  try {
+    let convocatorias = await db.Convocatoria.findAll({
+      include: [db.Area],
+    });
+    res.json(convocatorias);
+  } catch (e) {
+    console.log(e);
+    res.status(500);
+    res.json(e);
+  }
 });
 
 app.get("/convocatorias/:id", async function (req, res) {
   const id = req.params.id;
-  const convocatoria = await Convocatoria.findByPk(id);
+  const convocatoria = await db.Convocatoria.findByPk(id);
   res.json(convocatoria);
 });
 
 app.delete("/convocatorias", async function (req, res) {
   let ids = req.body as [string];
-  let destroyedCount = await Convocatoria.destroy({
+  let destroyedCount = await db.Convocatoria.destroy({
     where: { id: ids },
   });
   res.json({ deleted: destroyedCount });
 });
+
+app.post("/");
 
 // next lines are used to serve the built client app
 // (special care is needed since we use client side routing)
