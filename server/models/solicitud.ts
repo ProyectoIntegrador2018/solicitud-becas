@@ -1,7 +1,15 @@
 "use strict";
 
 // import sequelize from "./index";
-import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize";
+import {
+  Sequelize,
+  HasManyAddAssociationMixin,
+  Model,
+  DataTypes,
+  BuildOptions,
+} from "sequelize";
+
+import { EvaluacionModel } from "./evaluacion";
 
 export interface SolicitudAttributes {
   id: string;
@@ -10,7 +18,9 @@ export interface SolicitudAttributes {
 
 export interface SolicitudModel
   extends Model<SolicitudAttributes>,
-    SolicitudAttributes {}
+    SolicitudAttributes {
+  addEvaluacione: HasManyAddAssociationMixin<EvaluacionModel, number>;
+}
 
 export type SolicitudStatic = typeof Model & {
   new (values?: object, options?: BuildOptions): SolicitudModel;
@@ -29,12 +39,3 @@ export function SolicitudFactory(sequelize: Sequelize) {
     },
   });
 }
-
-// export interface IApplication {
-//   id: string;
-//   name: string;
-//   lastName: string;
-//   convening: string;
-//   area: string;
-//   evaluations: IEvaluation[];
-// }

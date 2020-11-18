@@ -163,7 +163,7 @@ app.patch("/convocatorias", async function (req, res) {
 app.get("/convocatorias", async function (req, res) {
   try {
     let convocatorias = await db.Convocatoria.findAll({
-      include: [db.Area],
+      include: [{ model: db.Area, include: [db.Solicitud] }, db.Solicitud],
     });
     res.json(convocatorias);
   } catch (e) {
@@ -274,10 +274,27 @@ app.post("/convocatorias/:id/solicitudes", async function (req, res) {
   });
 });
 
+app.post("/solicitudes/:id/evaluacion", async function (req, res) {
+  try {
+    const id = req.params.id;
+    const solicitud = await db.Solicitud.findByPk(id, {
+      include: [db.Evaluacion],
+    });
+    const evaluacion = await db.Evaluacion.create(req.body);
+    await solicitud?.addEvaluacione(evaluacion);
+
+    res.json(evaluacion);
+  } catch (e) {
+    console.error(e);
+    res.status(500); // Internal Server Error
+    res.json(e);
+  }
+});
+
 app.get("/solicitudes", async function (req, res) {
   try {
     const solicitudes = await db.Solicitud.findAll({
-      include: [db.Area, db.Convocatoria],
+      include: [db.Area, db.Convocatoria, db.Evaluacion],
     });
     res.json(solicitudes);
   } catch (e) {
