@@ -1,12 +1,22 @@
 "use strict";
 
-import sequelize from "./index";
-import { Model, DataTypes } from "sequelize";
+import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize";
 
-export default class User extends Model {}
+export interface UserAttributes {
+  googleId: string;
+  givenName: string;
+  familyName: string;
+  email: string;
+}
 
-User.init(
-  {
+export interface UserModel extends Model<UserAttributes>, UserAttributes {}
+
+export type UserStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): UserModel;
+};
+
+export function UserFactory(sequelize: Sequelize) {
+  return <UserStatic>sequelize.define("users", {
     googleId: {
       type: DataTypes.STRING,
       primaryKey: true,
@@ -22,13 +32,7 @@ User.init(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
-  },
-  {
-    // Other model options go here
-    sequelize, // We need to pass the connection instance
-    modelName: "User", // We need to choose the model name
-  }
-);
-
-// User.sync({ force: true });
+  });
+}

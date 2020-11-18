@@ -1,9 +1,10 @@
 import express = require("express");
 import path from "path";
 import { OAuth2Client } from "google-auth-library";
-import User from "./models/user";
-import AuthorizedEmail from "./models/authorizedEmail";
-import Convocatoria from "./models/convocatoria";
+import fileUpload from "express-fileupload";
+import csvParse from "csv-parse";
+
+import { db } from "./models/index";
 
 const CLIENT_ID =
   "401453194268-j77retfhpocjvd3lhrniu3c35asluk9s.apps.googleusercontent.com";
@@ -35,6 +36,9 @@ const app: express.Application = express();
 
 app.use(express.json());
 
+// express middle-ware to handle files
+app.use(fileUpload());
+
 app.post("/user-log-in", async function (req, res) {
   const userLogIn = req.body as UserLogIn; // does this fail if body is not of type UserLogIn?
 
@@ -48,7 +52,15 @@ app.post("/user-log-in", async function (req, res) {
     return;
   }
 
-  const authEmail = await AuthorizedEmail.findByPk(payload.email);
+  if (
+    payload.given_name === undefined ||
+    payload.family_name === undefined ||
+    payload.email === undefined
+  ) {
+    throw Error(`google's payload is incomplete: ${payload}`);
+  }
+
+  const authEmail = await db.AuthorizedEmail.findByPk(payload.email);
   if (authEmail === null) {
     res.status(401);
     res.json({ reason: "email is not in the authorized list of emails" });
@@ -56,7 +68,7 @@ app.post("/user-log-in", async function (req, res) {
   }
 
   try {
-    const [user, _wasCreated] = await User.findOrCreate({
+    const [user, _wasCreated] = await db.User.findOrCreate({
       where: { googleId: payload.sub },
       defaults: {
         googleId: payload.sub,
@@ -74,15 +86,21 @@ app.post("/user-log-in", async function (req, res) {
 });
 
 app.get("/users", async function (req, res) {
-  const users = await User.findAll();
+  const users = await db.User.findAll();
 
   res.json(users);
 });
 
 app.get("/users/:id", async function (req, res) {
-  const id = req.params.id;
-  const user = await User.findByPk(id);
-  res.json(user);
+  try {
+    const id = req.params.id;
+    console.log(id);
+    const user = await db.User.findByPk(id);
+    res.json(user);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(e);
+  }
 });
 
 app.post("/auth-emails", async function (req, res) {
@@ -91,7 +109,7 @@ app.post("/auth-emails", async function (req, res) {
   }));
 
   // AuthorizedEmail.bulkCreate(emails, { ignoreDuplicates: true });
-  let createdEmails = await AuthorizedEmail.bulkCreate(emails, {
+  let createdEmails = await db.AuthorizedEmail.bulkCreate(emails, {
     // this is stupid but it seems to be the only way to make sequelize do what
     // we want. The desired behavior is the following: if there is a duplicate,
     // ignore it, if not, insert it with the correct createdAt/updatedAt dates.
@@ -104,33 +122,37 @@ app.post("/auth-emails", async function (req, res) {
 });
 
 app.get("/auth-emails", async function (_req, res) {
-  let emails = await AuthorizedEmail.findAll();
+  let emails = await db.AuthorizedEmail.findAll();
   res.json(emails);
 });
 
 app.delete("/auth-emails", async function (req, res) {
   let emails = req.body as [string];
-  let destroyedCount = await AuthorizedEmail.destroy({
+  let destroyedCount = await db.AuthorizedEmail.destroy({
     where: { email: emails },
   });
   res.json({ emailsRemoved: destroyedCount });
 });
 
 app.post("/convocatorias", async function (req, res) {
-  const convocatoria = req.body as Convocatoria;
   try {
-    let createdConvocatoria = await Convocatoria.create(convocatoria);
+    const createdConvocatoria = await db.Convocatoria.create(req.body, {
+      include: db.Area,
+    });
+
     res.json(createdConvocatoria);
   } catch (e) {
+    console.log(e);
     res.status(500);
     res.json(e);
   }
 });
 
 app.patch("/convocatorias", async function (req, res) {
-  const convocatoria = req.body as Convocatoria;
   try {
-    let updatedConvocatoria = await convocatoria.update(convocatoria);
+    let updatedConvocatoria = await db.Convocatoria.update(req.body, {
+      where: req.body.id,
+    });
     res.json(updatedConvocatoria);
   } catch (e) {
     res.status(500);
@@ -139,22 +161,187 @@ app.patch("/convocatorias", async function (req, res) {
 });
 
 app.get("/convocatorias", async function (req, res) {
-  let convocatorias = await Convocatoria.findAll();
-  res.json(convocatorias);
+  try {
+    let convocatorias = await db.Convocatoria.findAll({
+      include: [db.Area],
+    });
+    res.json(convocatorias);
+  } catch (e) {
+    console.log(e);
+    res.status(500);
+    res.json(e);
+  }
 });
 
 app.get("/convocatorias/:id", async function (req, res) {
   const id = req.params.id;
-  const convocatoria = await Convocatoria.findByPk(id);
+  const convocatoria = await db.Convocatoria.findByPk(id);
   res.json(convocatoria);
 });
 
 app.delete("/convocatorias", async function (req, res) {
   let ids = req.body as [string];
-  let destroyedCount = await Convocatoria.destroy({
+  let destroyedCount = await db.Convocatoria.destroy({
     where: { id: ids },
   });
   res.json({ deleted: destroyedCount });
+});
+
+// THIS WILL FIRST REMOVE ALL AREAS RELATED TO THIS CONVOCATORIA, THEN IT WILL
+// ADD THE NEW AREAS
+app.post("/convocatorias/:id/areas", async function (req, res) {
+  const id = req.params.id;
+
+  const convocatoria = await db.Convocatoria.findByPk(id);
+  if (!convocatoria) {
+    return res.status(400).send("Convocatoria doesn't exist for given id");
+  }
+
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("No files were uploaded.");
+  }
+
+  const first = Object.values(req.files)[0];
+
+  csvParse(first.data, async (err, records: Array<Array<any>>, info) => {
+    if (err) {
+      return res.status(400).send(`csv parser error: ${err}`);
+    }
+    if (records.length <= 1) {
+      return res.status(400).send("empty csv or csv with only a header");
+    }
+
+    const rows = records.slice(1);
+
+    const newAreas = rows.map((r) => ({
+      id: String(r[0]).trim(),
+      name: String(r[1]).trim(),
+      convocatoriaId: id,
+    }));
+
+    try {
+      await convocatoria.removeAreas();
+      await db.Area.destroy({ where: { convocatoriaId: id } });
+      const createdAreas = await db.Area.bulkCreate(newAreas);
+      res.json(createdAreas);
+    } catch (e) {
+      console.error(e);
+      res.status(500); // Internal Server Error
+      res.json(e);
+    }
+  });
+});
+
+app.post("/convocatorias/:id/solicitudes", async function (req, res) {
+  const id = req.params.id;
+
+  const convocatoria = await db.Convocatoria.findByPk(id);
+  if (!convocatoria) {
+    return res.status(400).send("Convocatoria doesn't exist for given id");
+  }
+
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("No files were uploaded.");
+  }
+
+  const first = Object.values(req.files)[0];
+
+  csvParse(first.data, async (err, records: Array<Array<any>>, info) => {
+    if (err) {
+      return res.status(400).send(`csv parser error: ${err}`);
+    }
+    if (records.length <= 1) {
+      return res.status(400).send("empty csv or csv with only a header");
+    }
+
+    const rows = records.slice(1);
+
+    const newSolicitudes = rows.map((r) => ({
+      id: String(r[0]).trim(),
+      name: String(r[1]).trim(),
+      areaId: String(r[2]).trim(),
+      convocatoriaId: id,
+    }));
+
+    try {
+      const createdSolicitudes = await db.Solicitud.bulkCreate(newSolicitudes);
+      res.json(createdSolicitudes);
+    } catch (e) {
+      console.error(e);
+      res.status(500); // Internal Server Error
+      res.json(e);
+    }
+  });
+});
+
+app.get("/solicitudes", async function (req, res) {
+  try {
+    const solicitudes = await db.Solicitud.findAll({
+      include: [db.Area, db.Convocatoria],
+    });
+    res.json(solicitudes);
+  } catch (e) {
+    console.error(e);
+    res.status(500); // Internal Server Error
+    res.json(e);
+  }
+});
+
+app.delete("/solicitudes", async function (req, res) {
+  try {
+    const ids = req.body as [string];
+    const destroyedCount = await db.Solicitud.destroy({
+      where: { id: ids },
+    });
+    res.json({ deleted: destroyedCount });
+  } catch (e) {
+    console.error(e);
+    res.status(500); // Internal Server Error
+    res.json(e);
+  }
+});
+
+app.post("/convocatorias/:id/evaluadores", async function (req, res) {
+  const id = req.params.id;
+
+  const convocatoria = await db.Convocatoria.findByPk(id);
+  if (!convocatoria) {
+    return res.status(400).send("Convocatoria doesn't exist for given id");
+  }
+
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("No files were uploaded.");
+  }
+
+  const first = Object.values(req.files)[0];
+
+  csvParse(first.data, async (err, records: Array<Array<any>>, info) => {
+    if (err) {
+      return res.status(400).send(`csv parser error: ${err}`);
+    }
+    if (records.length <= 1) {
+      return res.status(400).send("empty csv or csv with only a header");
+    }
+
+    const rows = records.slice(1);
+
+    const emails = rows.map((r) => ({ email: String(r[0]).trim() }));
+
+    try {
+      const authEmails = await db.AuthorizedEmail.bulkCreate(emails, {
+        updateOnDuplicate: ["email"],
+      });
+      await convocatoria.addEmailEvaluadores(authEmails);
+      await convocatoria.reload({
+        include: { model: db.AuthorizedEmail, as: "emailEvaluadores" },
+      });
+      res.json(convocatoria);
+    } catch (e) {
+      console.error(e);
+      res.status(500); // Internal Server Error
+      res.json(e);
+    }
+  });
 });
 
 // next lines are used to serve the built client app
