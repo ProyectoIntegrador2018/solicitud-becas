@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import dayjs from 'dayjs';
+import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import DayPicker from 'react-day-picker/DayPicker';
 import PrimaryButton from '../../../buttons/PrimaryButton';
@@ -15,25 +14,26 @@ import './updateConvening.css';
 import { IConvening } from '../convening.types';
 
 const UpdateConvening: React.FC = () => {
+  const history = useHistory();
   // const { id } = useParams();
   // get convening with api call
 
   // meanwhile:
-  const convening: IConvening = {
-    convening_name: 'Conv1',
-    convening_start: '5/10/2020',
-    convening_end: '12/10/2021',
+  const convening: Partial<IConvening> = {
+    name: 'Conv1',
+    evaluationStartDate: new Date(2020, 4, 10),
+    evaluationEndDate: new Date(2020, 4, 12),
   };
 
-  const [startDate, setStartDate] = useState<Date>(dayjs(convening.convening_start).toDate());
-  const [endDate, setEndDate] = useState<Date>(dayjs(convening.convening_end).toDate());
+  const [startDate, setStartDate] = useState<Date>(convening.evaluationStartDate);
+  const [endDate, setEndDate] = useState<Date>(convening.evaluationEndDate);
   const windowDimensions = useWindowWidth();
 
   return (
     <div className="updateConvening-layout">
-      <Title text={convening.convening_name} size={2} />
+      <Title text={convening.name} size={2} />
       <Formik
-        initialValues={{ convening_name: convening.convening_name }}
+        initialValues={{ name: convening.name }}
         // validationSchema={}
         enableReinitialize
         onSubmit={values => {
@@ -43,14 +43,14 @@ const UpdateConvening: React.FC = () => {
         {({ values }) => (
           <Form className="updateConvening-content">
             <div className="updateConvening-name">
-              <FieldLabel htmlFor="convening_name" text="Nombre de la convocatoria" />
-              <Field name="convening_name">
+              <FieldLabel htmlFor="name" text="Nombre de la convocatoria" />
+              <Field name="name">
                 {({ field, meta }) => (
                   <TextInput
                     field={field}
                     meta={meta}
-                    id="convening_name"
-                    name="convening_name"
+                    id="name"
+                    name="name"
                     type="text"
                     size={windowDimensions > 500 ? 'l' : 'm'}
                   />
@@ -63,8 +63,8 @@ const UpdateConvening: React.FC = () => {
                 <DayPicker
                   selectedDays={startDate}
                   canChangeMonth
-                  fromMonth={dayjs(convening.convening_start).toDate()}
-                  initialMonth={dayjs(convening.convening_start).toDate()}
+                  fromMonth={convening.evaluationStartDate}
+                  initialMonth={convening.evaluationStartDate}
                   locale="es"
                   months={MONTHS}
                   showWeekDays
@@ -79,7 +79,7 @@ const UpdateConvening: React.FC = () => {
                   }}
                   disabledDays={[
                     {
-                      before: dayjs(convening.convening_start).toDate(),
+                      before: convening.evaluationStartDate,
                     },
                   ]}
                 />
@@ -89,7 +89,7 @@ const UpdateConvening: React.FC = () => {
                 <DayPicker
                   selectedDays={endDate}
                   canChangeMonth
-                  fromMonth={dayjs(convening.convening_start).toDate()}
+                  fromMonth={convening.evaluationStartDate}
                   month={endDate}
                   locale="es"
                   months={MONTHS}
@@ -110,9 +110,7 @@ const UpdateConvening: React.FC = () => {
               </div>
             </div>
             <div className="updateConvening-buttons">
-              <Link to="/">
-                <SecondaryButton text="Cancelar" />
-              </Link>
+              <SecondaryButton text="Cancelar" handleClick={() => history.goBack()} />
               <PrimaryButton text="Editar" type="submit" />
             </div>
           </Form>

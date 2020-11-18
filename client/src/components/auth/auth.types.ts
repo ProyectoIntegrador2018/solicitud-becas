@@ -16,6 +16,7 @@ export interface IAuthContext {
   authenticated: boolean;
   loading: boolean;
   accessToken: string;
+  convenings?: string[];
   logout: () => void;
   login: (response: GoogleLoginResponse) => void;
 }
@@ -27,4 +28,5 @@ export interface IAuthState {
   authenticated: boolean;
   loading: boolean;
   accessToken: string;
+  convenings?: string[];
 }

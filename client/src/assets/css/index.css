@@ -19,7 +19,7 @@ code {
 
 .layout {
   display: flex;
-  min-height: calc(100vh - (210px));
+  min-height: calc(100vh - (90px));
 }
 
 .footer {
@@ -32,19 +32,8 @@ code {
   border-top-right-radius: 30px;
 }
 
-.header {
-  color: white;
-  background: rgb(40, 144, 185);
-  z-index: 100000;
-  position: sticky;
-  width: 100%;
-  top: 0;
-  height: 90px;
-  -webkit-box-shadow: 0px 5px 16px #a1a1a1;
-  -moz-box-shadow: 0px 5px 16px #a1a1a1;
-  box-shadow: 0px 5px 16px #a1a1a1;
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
+.tc-gray {
+  color: rgb(40, 144, 185) !important;
 }
 
 .blue-gradient {
@@ -71,6 +60,33 @@ code {
     #7db9e8 100%
   ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=0 ); /* IE6-9 */
+}
+
+.light-blue-gradient {
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#e4f5fc+0,bfe8f9+50,9fd8ef+51,2ab0ed+100;Blue+Gloss+%235 */
+  background: #e4f5fc; /* Old browsers */
+  background: -moz-linear-gradient(
+    top,
+    #e4f5fc 0%,
+    #bfe8f9 50%,
+    #9fd8ef 51%,
+    #2ab0ed 100%
+  ); /* FF3.6-15 */
+  background: -webkit-linear-gradient(
+    top,
+    #e4f5fc 0%,
+    #bfe8f9 50%,
+    #9fd8ef 51%,
+    #2ab0ed 100%
+  ); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(
+    to bottom,
+    #e4f5fc 0%,
+    #bfe8f9 50%,
+    #9fd8ef 51%,
+    #2ab0ed 100%
+  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e4f5fc', endColorstr='#2ab0ed',GradientType=0 ); /* IE6-9 */
 }
 .red-gradient {
   /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#f85032+0,f16f5c+30,f02f17+71,f6290c+80,f6290c+80,e73827+100 */

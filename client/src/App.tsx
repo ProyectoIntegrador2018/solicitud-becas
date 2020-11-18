@@ -3,17 +3,17 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import Routes from './Routes';
 import AuthProvider from './components/auth/AuthProvider';
 import ApolloProvider from './components/apollo/ApolloProvider';
+import Header from './components/header/Header';
 
 const App: React.FC = () => {
   return (
     <Router>
       <AuthProvider>
         <ApolloProvider>
-          <div className="header"></div>
+          <Header />
           <main className="layout">
             <Routes />
           </main>
-          <div className="footer"></div>
         </ApolloProvider>
       </AuthProvider>
     </Router>

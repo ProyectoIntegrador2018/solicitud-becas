@@ -5,10 +5,10 @@ export const baseStyle = {
   padding: '20px',
   borderWidth: 2,
   borderRadius: 2,
-  borderColor: '#eeeeee',
+  borderColor: 'rgb(138, 131, 131)',
   borderStyle: 'dashed',
-  backgroundColor: '#fafafa',
-  color: '#bdbdbd',
+  backgroundColor: 'rgb(231, 243, 244)',
+  color: 'rgb(162, 160, 160)',
   outline: 'none',
   transition: 'border .24s ease-in-out',
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import DayPicker from 'react-day-picker/DayPicker';
 import PrimaryButton from '../../../buttons/PrimaryButton';
 import SecondaryButton from '../../../buttons/SecondaryButton';
@@ -18,6 +18,7 @@ import 'react-day-picker/lib/style.css';
 import './createConvening.css';
 
 const CreateConvening: React.FC = () => {
+  const history = useHistory();
   const [startDate, setStartDate] = useState<Date>(yesterday);
   const [endDate, setEndDate] = useState<Date>(oneDayAfter(startDate));
   const windowDimensions = useWindowWidth();
@@ -83,9 +84,7 @@ const CreateConvening: React.FC = () => {
           </div>
         </div>
         <div className="createConvening-buttons">
-          <Link to="/">
-            <SecondaryButton text="Cancelar" />
-          </Link>
+          <SecondaryButton text="Cancelar" handleClick={() => history.goBack()} />
           <PrimaryButton text="Crear" type="submit" />
         </div>
       </div>

@@ -11,8 +11,8 @@ const AdminHome: React.FC<{}> = () => {
         <Link to={`${path}/convocatorias`}>
           <button className="adminHome-option blue-gradient">Convocatorias</button>
         </Link>
-        <Link to={`${path}/solicitudes`}>
-          <button className="adminHome-option brown-gradient">Solicitudes</button>
+        <Link to={`${path}/solicitudes/lista`}>
+          <button className="adminHome-option blue-gradient">Ver todas las solicitudes</button>
         </Link>
       </div>
     </div>

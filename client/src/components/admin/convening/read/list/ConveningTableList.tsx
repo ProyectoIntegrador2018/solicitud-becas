@@ -2,15 +2,13 @@ import React from 'react';
 import MaterialTable from 'material-table';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
-import tableIcons from '../../../../utils/table/TableIcons';
-import { Link, useRouteMatch } from 'react-router-dom';
-import PrimaryButton from '../../../buttons/PrimaryButton';
-import SecondaryButton from '../../../buttons/SecondaryButton';
-import './conveningTable.css';
+import { Link } from 'react-router-dom';
+import tableIcons from '../../../../../utils/table/TableIcons';
+import PrimaryButton from '../../../../buttons/PrimaryButton';
+import SecondaryButton from '../../../../buttons/SecondaryButton';
+import './conveningTableList.css';
 
-const ConveningTable: React.FC = () => {
-  const { path } = useRouteMatch();
-
+const ConveningTableList: React.FC = () => {
   return (
     <div className="conveningTable-layout">
       <MaterialTable
@@ -18,43 +16,43 @@ const ConveningTable: React.FC = () => {
         icons={tableIcons}
         columns={[
           {
-            field: 'nombre',
+            field: 'name',
             title: 'Nombre',
             render: rowData => (
-              <Link to={`${path}/${rowData.nombre}`}>
-                <PrimaryButton text={`${rowData.nombre}`} />
+              <Link to={`/admin/convocatorias/${rowData.name}`}>
+                <PrimaryButton text={`${rowData.name}`} />
               </Link>
             ),
           },
           {
-            field: 'areas',
+            field: 'areas_count',
             title: 'Areas',
             type: 'numeric',
           },
           {
-            field: 'evaluadores',
+            field: 'evaluators_count',
             title: 'Evaluadores',
             type: 'numeric',
           },
           {
-            field: 'aplicaciones',
+            field: 'applications_count',
             title: 'Aplicaciones',
             type: 'numeric',
           },
           {
-            field: 'fecha_inicio',
+            field: 'convening_start',
             title: 'Fecha de Inicio',
             type: 'date',
           },
           {
-            field: 'fecha_cierre',
+            field: 'convening_end',
             title: 'Fecha de Cierre',
             type: 'date',
           },
           {
             field: 'editar',
             render: rowData => (
-              <Link to={`${path}/editar/${rowData.nombre}`}>
+              <Link to={`/admin/convocatorias/editar/${rowData.name}`}>
                 <SecondaryButton text="Editar" />
               </Link>
             ),
@@ -66,7 +64,7 @@ const ConveningTable: React.FC = () => {
                 text="Borrar"
                 handleClick={() => {
                   Swal.fire({
-                    title: `Deseas eliminar la convocatoria ${rowData.nombre}?`,
+                    title: `Deseas eliminar la convocatoria ${rowData.name}?`,
                     icon: 'warning',
                     showCancelButton: true,
                     cancelButtonText: 'Cancelar',
@@ -79,28 +77,28 @@ const ConveningTable: React.FC = () => {
         ]}
         data={[
           {
-            nombre: 'Conv1',
-            areas: 20,
-            evaluadores: 40,
-            aplicaciones: 30,
-            fecha_inicio: dayjs('5/10/2020').toDate(),
-            fecha_cierre: dayjs('5/12/2020').toDate(),
+            name: 'Conv1',
+            areas_count: 20,
+            evaluators_count: 40,
+            applications_count: 30,
+            convening_start: dayjs('5/10/2020').toDate(),
+            convening_end: dayjs('5/12/2020').toDate(),
           },
           {
-            nombre: 'Conv2',
-            areas: 111,
-            evaluadores: 123,
-            aplicaciones: 221,
-            fecha_inicio: dayjs('2/11/2019').toDate(),
-            fecha_cierre: dayjs('5/10/2021').toDate(),
+            name: 'Conv2',
+            areas_count: 111,
+            evaluators_count: 123,
+            applications_count: 221,
+            convening_start: dayjs('2/11/2019').toDate(),
+            convening_end: dayjs('5/10/2021').toDate(),
           },
           {
-            nombre: 'Conv3',
-            areas: 10,
-            evaluadores: 1334,
-            aplicaciones: 123,
-            fecha_inicio: dayjs('1/12/2020').toDate(),
-            fecha_cierre: dayjs('5/2/2022').toDate(),
+            name: 'Conv3',
+            areas_count: 10,
+            evaluators_count: 1334,
+            applications_count: 123,
+            convening_start: dayjs('1/12/2020').toDate(),
+            convening_end: dayjs('5/2/2022').toDate(),
           },
         ]}
       />
@@ -108,4 +106,4 @@ const ConveningTable: React.FC = () => {
   );
 };
 
-export default ConveningTable;
+export default ConveningTableList;

@@ -20,9 +20,10 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
     },
     authenticated: true,
     admin: true,
-    evaluator: false,
+    evaluator: true,
     loading: false,
     accessToken: '',
+    convenings: ['Conv1', 'Conv2', 'Conv3'],
   };
 
   const [state, setState] = useState<IAuthState>(initialAuthState);
@@ -36,12 +37,14 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
       evaluator: false,
       loading: false,
       accessToken: '',
+      convenings: [],
     });
   };
 
   const login = (response: GoogleLoginResponse) => {
     const { profileObj, accessToken } = response;
     // API get call para user
+    // Determina si es admin o eval
     if (accessToken) {
       setState({
         user: profileObj,
@@ -50,6 +53,7 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
         evaluator: true,
         loading: false,
         accessToken,
+        convenings: ['Conv1', 'Conv2', 'Conv3'],
       });
     } else {
       logout();

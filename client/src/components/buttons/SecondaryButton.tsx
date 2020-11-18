@@ -5,12 +5,13 @@ interface IProps {
   text: string;
   type?: 'button' | 'submit' | 'reset';
   handleClick?: () => void;
+  disabled?: boolean;
 }
 
 const SecondaryButton: React.FC<IProps> = (props: IProps) => {
-  const { text, handleClick = () => {}, type = 'button' } = props;
+  const { text, handleClick = () => {}, type = 'button', disabled = false } = props;
   return (
-    <button className="secondary-button" type={type} onClick={handleClick}>
+    <button className="secondary-button" type={type} onClick={handleClick} disabled={disabled}>
       {text}
     </button>
   );

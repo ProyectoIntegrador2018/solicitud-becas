@@ -1,0 +1,22 @@
+.header {
+  max-width: 100%;
+  color: white;
+  /* background: rgb(40, 144, 185); */
+  z-index: 11;
+  position: sticky;
+  top: 0;
+  height: 90px;
+  max-height: 90px;
+  -webkit-box-shadow: 0px 5px 16px #a1a1a1;
+  -moz-box-shadow: 0px 5px 16px #a1a1a1;
+  box-shadow: 0px 5px 16px #a1a1a1;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.header button {
+  height: 70px;
+}
