@@ -32,6 +32,7 @@ export function UserFactory(sequelize: Sequelize) {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
   });
 }

@@ -6,9 +6,11 @@ import {
   DataTypes,
   BuildOptions,
   HasManyRemoveAssociationsMixin,
+  BelongsToManyAddAssociationsMixin,
 } from "sequelize";
 
 import { AreaModel } from "./area";
+import { AuthorizedEmailModel } from "./authorizedEmail";
 
 export interface ConvocatoriaAttributes {
   id: string;
@@ -21,6 +23,10 @@ export interface ConvocatoriaModel
   extends Model<ConvocatoriaAttributes>,
     ConvocatoriaAttributes {
   removeAreas: HasManyRemoveAssociationsMixin<AreaModel, string>;
+  addEmailEvaluadores: BelongsToManyAddAssociationsMixin<
+    AuthorizedEmailModel,
+    string
+  >;
 }
 
 export type ConvocatoriaStatic = typeof Model & {

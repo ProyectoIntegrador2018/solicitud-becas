@@ -11,6 +11,7 @@ import {
 } from "./authorizedEmail";
 
 import { SolicitudFactory, SolicitudStatic } from "./solicitud";
+import { EvaluadorFactory, EvaluadorStatic } from "./evaluador";
 
 import config from "../config/config";
 
@@ -29,6 +30,7 @@ export interface DB {
   AuthorizedEmail: AuthorizedEmailStatic;
   User: UserStatic;
   Solicitud: SolicitudStatic;
+  Evaluador: EvaluadorStatic;
 }
 
 const node_env = process.env.NODE_ENV || "development";
@@ -51,19 +53,31 @@ const Convocatoria = ConvocatoriaFactory(sequelize);
 const AuthorizedEmail = AuthorizedEmailFactory(sequelize);
 const User = UserFactory(sequelize);
 const Solicitud = SolicitudFactory(sequelize);
+const Evaluador = EvaluadorFactory(sequelize, Convocatoria, User);
+
+// const AreasAsignadas = sequelize.define("areas_asignadas", {
+// })
 
 Convocatoria.hasMany(Area);
 Area.belongsTo(Convocatoria);
 
-// Los evaluadores pueden estar en varias convocatorias
-Convocatoria.belongsToMany(User, { through: "convocatoria_has_evaluadores" });
-User.belongsToMany(Convocatoria, { through: "convocatoria_has_evaluadores" });
+// Los evaluadores pueden estar en varias convocatorias : Many-to-Many
+Convocatoria.belongsToMany(AuthorizedEmail, {
+  through: "convocatoria_has_emails",
+  as: "emailEvaluadores",
+  timestamps: false,
+});
+AuthorizedEmail.belongsToMany(Convocatoria, {
+  through: "convocatoria_has_emails",
+  timestamps: false,
+});
 
-// Un evaluador puede tener 1 o más areas asignadas
-// User.hasMany(Area, {
-//   as: { singular: "areaAsignada", plural: "areasAsignadas" },
-// });
-// Area.belongsTo(User);
+// Evaluador.belongsTo(Convocatoria);
+// Evaluador.belongsTo(User);
+
+// Un evaluador puede tener 1 o más areas asignadas : Many-to-Many
+// Evaluador.belongsToMany(Area, { through: "AreasAsignadas" });
+// Area.belongsToMany(Evaluador, { through: "AreasAsignadas" });
 
 // Una convocatoria tiene muchas solicitudes, una solicitud tiene 1 convocatoria
 Convocatoria.hasMany(Solicitud);
@@ -80,6 +94,7 @@ export const db: DB = {
   AuthorizedEmail,
   User,
   Solicitud,
+  Evaluador,
 };
 
 // THIS LINE SHOULD NOT BE COMMITED IF PRODUCTION DATABASE HAS REAL DATA

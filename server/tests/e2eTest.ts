@@ -11,7 +11,7 @@ const testUser1 = {
   email: "user@test.com",
 };
 
-beforeAll(async () => {
+beforeAll(async (done) => {
   // drop tables and create them to start testing fresh
   await db.sequelize.sync({ force: true });
 
@@ -21,13 +21,14 @@ beforeAll(async () => {
   await db.User.bulkCreate([testUser1], {
     validate: true,
   });
-});
+  done();
+}, 40000);
 
 afterAll(async (done) => {
-  server.close();
-  await db.sequelize.drop();
-  done();
-});
+  server.close(async () => {
+    done();
+  });
+}, 11000);
 
 describe("users endpoint", () => {
   it("GET users/ returns users list", async () => {
@@ -39,7 +40,7 @@ describe("users endpoint", () => {
   });
 
   it("GET users/:id returns the user with that id", async () => {
-    const response = await request(server).get("/users/2");
+    const response = await request(server).get(`/users/${testUser1.googleId}`);
 
     expect(response.body).toMatchObject(testUser1);
 
@@ -198,5 +199,26 @@ describe("POST areas csv", () => {
       ["2", "Jose Perez", ["MA", "Mate"], ["C-2019", "Convocatoria 2019"]],
       ["1", "Chuchito Perez", ["MA", "Mate"], ["C-2019", "Convocatoria 2019"]],
     ]);
+  });
+});
+
+describe("Post evaluadores csv endpoint", () => {
+  it("works", async () => {
+    const convocatoria = {
+      id: "C-2018",
+      name: "Convocatoria 2018",
+      evaluationStartDate: "2020-10-27T20:09:41.740Z",
+      evaluationEndDate: "2020-10-28",
+    };
+
+    await request(server).post("/convocatorias").send(convocatoria).expect(200);
+
+    await request(server).post("/auth-emails").send(["user@test.com"]);
+
+    const evaluadoresCSVPostResponse = await request(server)
+      .post("/convocatorias/C-2018/evaluadores")
+      .attach("some_file", "tests/evaluadores.csv");
+
+    expect(evaluadoresCSVPostResponse.body).toBe({});
   });
 });

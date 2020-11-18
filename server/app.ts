@@ -92,9 +92,15 @@ app.get("/users", async function (req, res) {
 });
 
 app.get("/users/:id", async function (req, res) {
-  const id = req.params.id;
-  const user = await db.User.findByPk(id);
-  res.json(user);
+  try {
+    const id = req.params.id;
+    console.log(id);
+    const user = await db.User.findByPk(id);
+    res.json(user);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(e);
+  }
 });
 
 app.post("/auth-emails", async function (req, res) {
@@ -293,6 +299,49 @@ app.delete("/solicitudes", async function (req, res) {
     res.status(500); // Internal Server Error
     res.json(e);
   }
+});
+
+app.post("/convocatorias/:id/evaluadores", async function (req, res) {
+  const id = req.params.id;
+
+  const convocatoria = await db.Convocatoria.findByPk(id);
+  if (!convocatoria) {
+    return res.status(400).send("Convocatoria doesn't exist for given id");
+  }
+
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("No files were uploaded.");
+  }
+
+  const first = Object.values(req.files)[0];
+
+  csvParse(first.data, async (err, records: Array<Array<any>>, info) => {
+    if (err) {
+      return res.status(400).send(`csv parser error: ${err}`);
+    }
+    if (records.length <= 1) {
+      return res.status(400).send("empty csv or csv with only a header");
+    }
+
+    const rows = records.slice(1);
+
+    const emails = rows.map((r) => ({ email: String(r[0]).trim() }));
+
+    try {
+      const authEmails = await db.AuthorizedEmail.bulkCreate(emails, {
+        updateOnDuplicate: ["email"],
+      });
+      await convocatoria.addEmailEvaluadores(authEmails);
+      await convocatoria.reload({
+        include: { model: db.AuthorizedEmail, as: "emailEvaluadores" },
+      });
+      res.json(convocatoria);
+    } catch (e) {
+      console.error(e);
+      res.status(500); // Internal Server Error
+      res.json(e);
+    }
+  });
 });
 
 // next lines are used to serve the built client app
