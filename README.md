@@ -1,8 +1,11 @@
 # Solicitud-Becas
-Brindar una herramienta que permita a la Coordinación y Evaluación de la Formación de Capital Humano para optimizar el proceso de asignación de becas por parte del I2T2, desde la recepción de solicitudes, hasta la emisión de reportes. 
 
-Aplicación para la gestión de las solicitudes de becas de cada convocatoria
-por parte del I2T2
+Brindar una herramienta que permita a la Coordinación y Evaluación de la
+Formación de Capital Humano para optimizar el proceso de asignación de becas por
+parte del I2T2, desde la recepción de solicitudes, hasta la emisión de reportes.
+
+Aplicación para la gestión de las solicitudes de becas de cada convocatoria por
+parte del I2T2
 
 ## Table of contents
 
@@ -22,8 +25,8 @@ por parte del I2T2
 
 ### Environment URLS
 
-- **Production** - [TBD](TBD)
-- **Development** - [TBD](TBD)
+- **Production** - [App hosted in heroku](https://solicitud-becas.herokuapp.com/)
+- **Development** - Development **is** Prod here
 
 ### Equipo: Dumplings
 
@@ -38,10 +41,10 @@ por parte del I2T2
 | Technology    | Version |
 | ------------- | ------- |
 | React         | 16.13.1 |
-| Node.js       | 12.18.4 |
-| Typescript    | 3.8.2   |
-| graphql       | 14.6.0  |
 | apollo client | 2.6.8   |
+| Typescript    | 3.8.2   |
+| Node.js       | 12.18.4 |
+| PostgreSQL    | 12.4    |
 
 ### Management tools
 
@@ -49,7 +52,10 @@ You should ask for access to this tools if you don't have it already:
 
 - [Github repo](https://github.com/ProyectoIntegrador2018/solicitud-becas)
 - [Backlog](https://trello.com/b/qSQWAmli/project-management)
-- [Heroku]()
+- [Heroku](https://dashboard.heroku.com/)
+  The web server and app is hosted in heroku, using the personal account of:
+  Eduardo Hidalgo, but hosting it in any other heroku account shouldn't be hard,
+  if you need assistance hosting it in a different heroku account contact him.
 - [Documentation](https://teams.microsoft.com/_#/files/Equipo%201.06%20-%20Dumplings)
 
 ## Development
