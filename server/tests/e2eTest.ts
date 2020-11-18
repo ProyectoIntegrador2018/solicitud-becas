@@ -23,8 +23,9 @@ beforeAll(async () => {
   });
 });
 
-afterAll((done) => {
+afterAll(async (done) => {
   server.close();
+  await db.sequelize.drop();
   done();
 });
 
@@ -117,5 +118,46 @@ describe("convocatorias endpoint", () => {
       .send(["C-2020"]);
 
     expect(deleteResponse.body).toEqual({ deleted: 1 });
+  });
+});
+
+describe("POST areas csv", () => {
+  it("can parse a csv and add areas to a convocatoria", async () => {
+    const convocatoria = {
+      id: "C-2019",
+      name: "Convocatoria 2019",
+      evaluationStartDate: "2020-10-27T20:09:41.740Z",
+      evaluationEndDate: "2020-10-28",
+    };
+
+    const expectedConvocatoria = {
+      evaluationEndDate: "2020-10-28",
+      evaluationStartDate: "2020-10-27",
+      id: "C-2019",
+      name: "Convocatoria 2019",
+    };
+
+    const postResponse = await request(server)
+      .post("/convocatorias")
+      .send(convocatoria);
+
+    expect(postResponse.body).toMatchObject(expectedConvocatoria);
+
+    const filePostResponse = await request(server)
+      .post("/convocatorias/C-2019/areas")
+      .attach("some_file", "tests/areas.csv");
+
+    console.log(filePostResponse);
+    expect(filePostResponse).toMatchObject({});
+
+    expect(
+      filePostResponse.body.map((x) => [x.id, x.name, x.convocatoriaId])
+    ).toMatchObject([
+      ["MA", "Mate", "C-2019"],
+      ["CS", "Computación", "C-2019"],
+      ["DE", "Deporte", "C-2019"],
+      ["PH", "Física", "C-2019"],
+      ["AR", "Arte", "C-2019"],
+    ]);
   });
 });

@@ -1,6 +1,8 @@
 import express = require("express");
 import path from "path";
 import { OAuth2Client } from "google-auth-library";
+import fileUpload from "express-fileupload";
+import csvParse from "csv-parse";
 
 import { db } from "./models/index";
 
@@ -33,6 +35,9 @@ type UserLogIn = {
 const app: express.Application = express();
 
 app.use(express.json());
+
+// express middle-ware to handle files
+app.use(fileUpload());
 
 app.post("/user-log-in", async function (req, res) {
   const userLogIn = req.body as UserLogIn; // does this fail if body is not of type UserLogIn?
@@ -124,7 +129,6 @@ app.delete("/auth-emails", async function (req, res) {
 });
 
 app.post("/convocatorias", async function (req, res) {
-  // const convocatoria = req.body as Convocatoria;
   try {
     const createdConvocatoria = await db.Convocatoria.create(req.body, {
       include: db.Area,
@@ -139,23 +143,10 @@ app.post("/convocatorias", async function (req, res) {
 });
 
 app.patch("/convocatorias", async function (req, res) {
-  // const convocatoria = req.body as Convocatoria;
   try {
     let updatedConvocatoria = await db.Convocatoria.update(req.body, {
       where: req.body.id,
     });
-
-    // const newAreas = convocatoria?.areas;
-    // const oldAreas = updatedConvocatoria?.areas;
-
-    // if (newAreas !== undefined && newAreas !== null) {
-    //   // if newAreas
-    //   const removed = oldAreas?.filter((oldA) => newAreas.includes(oldA)) ?? [];
-
-    //   await updatedConvocatoria.removeAreas(removed);
-    //   await updatedConvocatoria.setAreas(newAreas);
-    // }
-
     res.json(updatedConvocatoria);
   } catch (e) {
     res.status(500);
@@ -190,7 +181,41 @@ app.delete("/convocatorias", async function (req, res) {
   res.json({ deleted: destroyedCount });
 });
 
-app.post("/");
+app.post("/convocatorias/:id/areas", async function (req, res) {
+  const id = req.params.id;
+
+  const convocatoria = await db.Convocatoria.findByPk(id);
+  if (!convocatoria) {
+    return res.status(400).send("Convocatoria doesn't exist for given id");
+  }
+
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("No files were uploaded.");
+  }
+
+  const first = Object.values(req.files)[0];
+
+  csvParse(first.data, async (err, records: Array<Array<any>>, info) => {
+    if (err) {
+      return res.status(400).send(`csv parser error: ${err}`);
+    }
+    if (records.length <= 1) {
+      return res.status(400).send("empty csv or csv with only a header");
+    }
+
+    const rows = records.slice(1);
+
+    const newAreas = rows.map((r) => ({
+      id: String(r[0]).trim(),
+      name: String(r[1]).trim(),
+      convocatoriaId: id,
+    }));
+
+    const createdAreas = await db.Area.bulkCreate(newAreas);
+
+    res.json(createdAreas);
+  });
+});
 
 // next lines are used to serve the built client app
 // (special care is needed since we use client side routing)
