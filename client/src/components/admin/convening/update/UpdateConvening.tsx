@@ -35,27 +35,31 @@ const UpdateConvening: React.FC = () => {
       <Formik
         initialValues={{ name: convening.name }}
         // validationSchema={}
+        validateOnBlur={false}
         enableReinitialize
         onSubmit={values => {
           console.log(values);
         }}
       >
-        {({ values }) => (
+        {({ values, errors }) => (
           <Form className="updateConvening-content">
             <div className="updateConvening-name">
               <FieldLabel htmlFor="name" text="Nombre de la convocatoria" />
               <Field name="name">
-                {({ field, meta }) => (
+                {({ field }) => (
                   <TextInput
                     field={field}
-                    meta={meta}
                     id="name"
                     name="name"
                     type="text"
                     size={windowDimensions > 500 ? 'l' : 'm'}
+                    error={errors?.name}
                   />
                 )}
               </Field>
+              {errors?.name && document.getElementById('name') !== document.activeElement && (
+                <span className="formErrorText">{errors.name}</span>
+              )}
             </div>
             <div className="updateConvening-dates">
               <div className="updateConvening-date">

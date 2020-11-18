@@ -36,6 +36,11 @@ code {
   color: rgb(40, 144, 185) !important;
 }
 
+.formErrorText {
+  color: rgb(180, 26, 26);
+  font-size: 13px;
+}
+
 .blue-gradient {
   background: #1e5799; /* Old browsers */
   background: -moz-linear-gradient(
