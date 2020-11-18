@@ -12,6 +12,7 @@ import {
 
 import { SolicitudFactory, SolicitudStatic } from "./solicitud";
 import { EvaluadorFactory, EvaluadorStatic } from "./evaluador";
+import { EvaluacionFactory, EvaluacionStatic } from "./evaluacion";
 
 import config from "../config/config";
 
@@ -31,6 +32,7 @@ export interface DB {
   User: UserStatic;
   Solicitud: SolicitudStatic;
   Evaluador: EvaluadorStatic;
+  Evaluacion: EvaluacionStatic;
 }
 
 const node_env = process.env.NODE_ENV || "development";
@@ -54,9 +56,7 @@ const AuthorizedEmail = AuthorizedEmailFactory(sequelize);
 const User = UserFactory(sequelize);
 const Solicitud = SolicitudFactory(sequelize);
 const Evaluador = EvaluadorFactory(sequelize, Convocatoria, User);
-
-// const AreasAsignadas = sequelize.define("areas_asignadas", {
-// })
+const Evaluacion = EvaluacionFactory(sequelize);
 
 Convocatoria.hasMany(Area);
 Area.belongsTo(Convocatoria);
@@ -71,6 +71,12 @@ AuthorizedEmail.belongsToMany(Convocatoria, {
   through: "convocatoria_has_emails",
   timestamps: false,
 });
+
+Evaluador.hasMany(Evaluacion);
+Evaluacion.belongsTo(Evaluador);
+
+Solicitud.hasMany(Evaluacion);
+Evaluacion.belongsTo(Solicitud);
 
 // Evaluador.belongsTo(Convocatoria);
 // Evaluador.belongsTo(User);
@@ -95,6 +101,7 @@ export const db: DB = {
   User,
   Solicitud,
   Evaluador,
+  Evaluacion,
 };
 
 // THIS LINE SHOULD NOT BE COMMITED IF PRODUCTION DATABASE HAS REAL DATA
