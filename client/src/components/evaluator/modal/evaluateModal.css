@@ -1,0 +1,51 @@
+.evaluateModal {
+  display: flex;
+  padding: 15px 10px;
+  flex-direction: column;
+}
+
+.evaluateModal-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.evaluateModal-buttons button {
+  margin-top: 50px;
+  margin-left: 10px;
+}
+.evaluateModal-info {
+  display: flex;
+  flex-direction: column;
+}
+.evaluateModal-data {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.evaluateModal-dataitem {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.evaluateModal-file {
+  height: 10%;
+  display: flex;
+  flex-direction: column;
+  max-width: 250px;
+}
+.evaluateModal-file a {
+  text-decoration: none;
+  font-weight: 700;
+  color: rgb(53, 53, 218);
+}
+
+.evaluateModal-file span {
+  font-weight: 700;
+  color: rgb(172, 13, 13);
+}
+
+.evaluateModal-dropzone {
+  height: 50px;
+  padding: 0px !important;
+}

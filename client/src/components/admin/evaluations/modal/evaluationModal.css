@@ -1,0 +1,28 @@
+.evaluationModal {
+  display: flex;
+  padding: 15px 10px;
+  flex-direction: column;
+}
+
+.evaluationModal-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.evaluationModal-buttons button {
+  margin-top: 50px;
+  margin-left: 10px;
+}
+.evaluationModal-info {
+  display: flex;
+  flex-direction: column;
+}
+.evaluationModal-data {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.evaluationModal-file {
+  margin-top: 20px;
+  max-width: 250px;
+}

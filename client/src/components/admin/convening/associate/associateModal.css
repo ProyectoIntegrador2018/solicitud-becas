@@ -1,0 +1,35 @@
+.associateModal {
+  display: flex;
+  padding: 15px 10px;
+  flex-direction: column;
+}
+
+.associateModal-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.associateModal-buttons button {
+  margin-top: 50px;
+  margin-left: 10px;
+}
+.associateModal-select {
+  margin: 16px;
+  min-width: 120px;
+}
+.associateModal-file {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  max-width: 250px;
+}
+.associateModal-file a {
+  text-decoration: none;
+  font-weight: 700;
+  color: rgb(53, 53, 218);
+}
+
+.associateModal-file span {
+  font-weight: 700;
+  color: rgb(172, 13, 13);
+}
