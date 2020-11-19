@@ -1,14 +1,37 @@
 import React from 'react';
 import MaterialTable from 'material-table';
 import Swal from 'sweetalert2';
-import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import tableIcons from '../../../../../utils/table/TableIcons';
 import PrimaryButton from '../../../../buttons/PrimaryButton';
 import SecondaryButton from '../../../../buttons/SecondaryButton';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { GET_CONVENINGS } from '../../convening.queries';
+import { DELETE_CONVENING } from '../../convening.mutations';
+import { IConvening } from '../../convening.types';
+import Spinner from '../../../../../utils/spinner/Spinner';
 import './conveningTableList.css';
 
 const ConveningTableList: React.FC = () => {
+  const { data, loading } = useQuery(GET_CONVENINGS, {
+    fetchPolicy: 'cache-and-network',
+    onError: () => {
+      Swal.fire({
+        title: 'Error cargando convocatorias',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+    },
+  });
+
+  const [deleteConvening] = useMutation(DELETE_CONVENING);
+
+  const convenings: IConvening[] = data ? data.convenings : [];
+
+  if (loading) {
+    return <Spinner />;
+  }
+
   return (
     <div className="conveningTable-layout">
       <MaterialTable
@@ -19,40 +42,40 @@ const ConveningTableList: React.FC = () => {
             field: 'name',
             title: 'Nombre',
             render: rowData => (
-              <Link to={`/admin/convocatorias/${rowData.name}`}>
+              <Link to={`/admin/convocatorias/${rowData.id}`}>
                 <PrimaryButton text={`${rowData.name}`} />
               </Link>
             ),
           },
           {
-            field: 'areas_count',
+            field: 'areasCount',
             title: 'Areas',
             type: 'numeric',
           },
           {
-            field: 'evaluators_count',
+            field: 'evaluatorsCount',
             title: 'Evaluadores',
             type: 'numeric',
           },
           {
-            field: 'applications_count',
+            field: 'applicationsCount',
             title: 'Aplicaciones',
             type: 'numeric',
           },
           {
-            field: 'convening_start',
+            field: 'evaluationStartDate',
             title: 'Fecha de Inicio',
             type: 'date',
           },
           {
-            field: 'convening_end',
+            field: 'evaluationEndDate',
             title: 'Fecha de Cierre',
             type: 'date',
           },
           {
             field: 'editar',
             render: rowData => (
-              <Link to={`/admin/convocatorias/editar/${rowData.name}`}>
+              <Link to={`/admin/convocatorias/editar/${rowData.id}`}>
                 <SecondaryButton text="Editar" />
               </Link>
             ),
@@ -69,38 +92,32 @@ const ConveningTableList: React.FC = () => {
                     showCancelButton: true,
                     cancelButtonText: 'Cancelar',
                     confirmButtonText: 'Eliminar',
+                  }).then(result => {
+                    if (result.isConfirmed) {
+                      deleteConvening({
+                        variables: {
+                          id: rowData.id,
+                        },
+                        refetchQueries: [
+                          {
+                            query: GET_CONVENINGS,
+                          },
+                        ],
+                      });
+                    }
                   });
                 }}
               />
             ),
           },
         ]}
-        data={[
-          {
-            name: 'Conv1',
-            areas_count: 20,
-            evaluators_count: 40,
-            applications_count: 30,
-            convening_start: dayjs('5/10/2020').toDate(),
-            convening_end: dayjs('5/12/2020').toDate(),
-          },
-          {
-            name: 'Conv2',
-            areas_count: 111,
-            evaluators_count: 123,
-            applications_count: 221,
-            convening_start: dayjs('2/11/2019').toDate(),
-            convening_end: dayjs('5/10/2021').toDate(),
-          },
-          {
-            name: 'Conv3',
-            areas_count: 10,
-            evaluators_count: 1334,
-            applications_count: 123,
-            convening_start: dayjs('1/12/2020').toDate(),
-            convening_end: dayjs('5/2/2022').toDate(),
-          },
-        ]}
+        data={convenings.map(conv => {
+          return {
+            ...conv,
+            areasCount: conv.areas?.length,
+            applicationsCount: conv.solicitudes?.length,
+          };
+        })}
       />
     </div>
   );

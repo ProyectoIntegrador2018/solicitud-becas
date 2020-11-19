@@ -20,3 +20,12 @@
 .header button {
   height: 70px;
 }
+.header img {
+  height: 150px;
+}
+
+@media (max-width: 500px) {
+  .header img {
+    height: 100px;
+  }
+}

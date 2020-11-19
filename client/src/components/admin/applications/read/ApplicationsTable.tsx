@@ -6,38 +6,43 @@ import PrimaryButton from '../../../buttons/PrimaryButton';
 import SecondaryButton from '../../../buttons/SecondaryButton';
 import UpdateApplicationModal from '../update-modal/UpdateApplicationModal';
 import { IApplication } from '../applications.types';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { GET_APPLICATIONS } from '../applications.queries';
+import DELETE_APPLICATION from '../applications.mutations';
+import Spinner from '../../../../utils/spinner/Spinner';
 import './applicationsTable.css';
 
 const ApplicationsTable: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [selected, setSelected] = useState<IApplication>(null);
 
-  const rowData: IApplication[] = [
-    {
-      id: '1',
-      name: 'Jorge',
-      lastName: 'Amione',
-      area: 'Front',
-      convening: 'Conv1',
-      evaluations: [],
+  const { data, loading } = useQuery(GET_APPLICATIONS, {
+    fetchPolicy: 'cache-and-network',
+    onError: () => {
+      Swal.fire({
+        title: 'Error cargando solicitudes',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
     },
-    {
-      id: '2',
-      name: 'Eduardo',
-      lastName: 'Hidalgo',
-      area: 'Back',
-      convening: 'Conv1',
-      evaluations: [],
-    },
-    {
-      id: '3',
-      name: 'Fabi',
-      lastName: 'Tamez',
-      area: 'PM',
-      convening: 'Conv1',
-      evaluations: [],
-    },
-  ];
+  });
+
+  const [deleteApplication] = useMutation(DELETE_APPLICATION);
+
+  const applications: IApplication[] = data ? data.applications : [];
+
+  const rowData = applications.map(app => {
+    return {
+      id: app.id,
+      name: app.name,
+      convening: app.convocatoria.name,
+      area: app.area.name,
+    };
+  });
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <>
@@ -49,11 +54,6 @@ const ApplicationsTable: React.FC = () => {
             {
               field: 'name',
               title: 'Nombre',
-              type: 'string',
-            },
-            {
-              field: 'lastName',
-              title: 'Apellido',
               type: 'string',
             },
             {
@@ -73,7 +73,8 @@ const ApplicationsTable: React.FC = () => {
                 <PrimaryButton
                   text="Actualizar documentos"
                   handleClick={() => {
-                    setSelected(rowData);
+                    const application = applications.find(app => app.id === rowData.id);
+                    setSelected(application);
                     setOpen(true);
                   }}
                 />
@@ -91,6 +92,19 @@ const ApplicationsTable: React.FC = () => {
                       showCancelButton: true,
                       cancelButtonText: 'Cancelar',
                       confirmButtonText: 'Eliminar',
+                    }).then(result => {
+                      if (result.isConfirmed) {
+                        deleteApplication({
+                          variables: {
+                            id: rowData.id,
+                          },
+                          refetchQueries: [
+                            {
+                              query: GET_APPLICATIONS,
+                            },
+                          ],
+                        });
+                      }
                     });
                   }}
                 />

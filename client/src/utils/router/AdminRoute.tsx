@@ -1,13 +1,14 @@
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import Spinner from '../spinner/Spinner';
 
 const AdminRoute: React.FC<RouteProps> = (props: RouteProps) => {
   const { ...routeProps } = props;
   const { authenticated, loading, admin } = useAuth();
 
   if (loading) {
-    return <div>Cargando...</div>;
+    return <Spinner />;
   }
 
   if (!authenticated) {

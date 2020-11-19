@@ -8,7 +8,7 @@ interface IProps {
   type?: string;
   size?: 's' | 'm' | 'l' | 'fat';
   field?: any;
-  meta?: any;
+  error?: string;
 }
 
 const getClass = (size: string) => {
@@ -18,7 +18,7 @@ const getClass = (size: string) => {
 };
 
 const TextInput: React.FC<IProps> = (props: IProps) => {
-  const { id, placeholder, name = '', type = 'text', size = 's', field, meta = undefined } = props;
+  const { id, placeholder, name = '', type = 'text', size = 's', field, error = '' } = props;
   if (size === 'fat') {
     return (
       <textarea id={id} className={'text-input text-input--fat'} placeholder={placeholder || ''} />
@@ -32,8 +32,7 @@ const TextInput: React.FC<IProps> = (props: IProps) => {
       type={type}
       className={getClass(size)}
       placeholder={placeholder || ''}
-      touched={meta ? meta.touched : undefined}
-      error={meta?.error}
+      error={error}
     />
   );
 };

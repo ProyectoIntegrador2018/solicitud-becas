@@ -1,11 +1,10 @@
 import React from 'react';
-import useAuth from '../../../utils/hooks/useAuth';
 import Title from '../../title/Title';
 import PrimaryButton from '../../buttons/PrimaryButton';
 import FieldLabel from '../../labels/field-label/FieldLabel';
 import AreasCheckboxes from './areas-checkboxes/AreasCheckboxes';
-import './areasRegister.css';
 import { useHistory } from 'react-router-dom';
+import './areasRegister.css';
 
 const hardCodedOptions = () => {
   return [
@@ -25,9 +24,7 @@ const hardCodedOptions = () => {
 };
 
 const AreasRegister: React.FC = () => {
-  const { loading } = useAuth();
   const history = useHistory();
-  if (loading) return <div>Cargando...</div>;
   return (
     <div className="areasRegister-layout">
       <Title size={2} text="Registra tus areas" />

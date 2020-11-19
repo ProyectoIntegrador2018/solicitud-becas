@@ -1,54 +1,109 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams, Redirect } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import DayPicker from 'react-day-picker/DayPicker';
+import dayjs from 'dayjs';
 import PrimaryButton from '../../../buttons/PrimaryButton';
 import SecondaryButton from '../../../buttons/SecondaryButton';
 import TextInput from '../../../input/TextInput';
 import Title from '../../../title/Title';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import FieldLabel from '../../../labels/field-label/FieldLabel';
 import useWindowWidth from '../../../../utils/hooks/useWindowWidth';
 import { MONTHS, WEEK_DAYS, oneDayAfter, isBefore } from '../../../../utils/dates/dateUtils';
+import { GET_CONVENING, GET_CONVENINGS } from '../convening.queries';
+import { UPDATE_CONVENING } from '../convening.mutations';
+import Swal from 'sweetalert2';
+import createConveningSchema from '../create/createConvening.schema';
+import Spinner from '../../../../utils/spinner/Spinner';
 import 'react-day-picker/lib/style.css';
 import './updateConvening.css';
-import { IConvening } from '../convening.types';
 
 const UpdateConvening: React.FC = () => {
   const history = useHistory();
-  // const { id } = useParams();
-  // get convening with api call
+  const { conv } = useParams();
 
-  // meanwhile:
-  const convening: Partial<IConvening> = {
-    name: 'Conv1',
-    evaluationStartDate: new Date(2020, 4, 10),
-    evaluationEndDate: new Date(2020, 4, 12),
+  const [startDate, setStartDate] = useState<Date>(dayjs().toDate());
+  const [endDate, setEndDate] = useState<Date>(dayjs().toDate());
+
+  const { data, loading } = useQuery(GET_CONVENING, {
+    variables: {
+      id: conv,
+    },
+    fetchPolicy: 'cache-and-network',
+    onCompleted: () => {
+      setStartDate(dayjs(data.convening.evaluationStartDate).toDate());
+      setEndDate(dayjs(data.convening.evaluationEndDate).toDate());
+    },
+  });
+
+  const [updateConvening] = useMutation(UPDATE_CONVENING, {
+    refetchQueries: [
+      {
+        query: GET_CONVENINGS,
+      },
+    ],
+  });
+
+  const convening = data ? data.convening : null;
+
+  const windowDimensions = useWindowWidth();
+
+  const handleSubmit = async (values, formik) => {
+    try {
+      await updateConvening({
+        variables: {
+          input: {
+            id: conv,
+            name: values.name,
+            evaluationStartDate: String(startDate),
+            evaluationEndDate: String(endDate),
+          },
+        },
+      });
+      Swal.fire({
+        title: `Se ha actualizado la convocatoria ${values.name}`,
+        icon: 'success',
+        confirmButtonText: 'Ok',
+      }).then(() => {
+        history.push('/admin/convocatorias/lista');
+      });
+    } catch (e) {
+      console.log(e.statusCode);
+      Swal.fire({
+        title: 'Hubo un error',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+      formik.setSubmitting(false);
+    }
   };
 
-  const [startDate, setStartDate] = useState<Date>(convening.evaluationStartDate);
-  const [endDate, setEndDate] = useState<Date>(convening.evaluationEndDate);
-  const windowDimensions = useWindowWidth();
+  if (loading) {
+    return <Spinner />;
+  }
+
+  if (!convening) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <div className="updateConvening-layout">
-      <Title text={convening.name} size={2} />
+      <Title text={convening?.name} size={2} />
       <Formik
-        initialValues={{ name: convening.name }}
-        // validationSchema={}
+        initialValues={{ name: convening?.name }}
+        validationSchema={createConveningSchema}
         enableReinitialize
-        onSubmit={values => {
-          console.log(values);
-        }}
+        onSubmit={handleSubmit}
       >
-        {({ values }) => (
+        {({ values, errors }) => (
           <Form className="updateConvening-content">
             <div className="updateConvening-name">
               <FieldLabel htmlFor="name" text="Nombre de la convocatoria" />
               <Field name="name">
-                {({ field, meta }) => (
+                {({ field }) => (
                   <TextInput
                     field={field}
-                    meta={meta}
                     id="name"
                     name="name"
                     type="text"
@@ -56,6 +111,9 @@ const UpdateConvening: React.FC = () => {
                   />
                 )}
               </Field>
+              {errors?.name && document.getElementById('name') !== document.activeElement && (
+                <span className="formErrorText">{errors.name}</span>
+              )}
             </div>
             <div className="updateConvening-dates">
               <div className="updateConvening-date">
@@ -63,8 +121,8 @@ const UpdateConvening: React.FC = () => {
                 <DayPicker
                   selectedDays={startDate}
                   canChangeMonth
-                  fromMonth={convening.evaluationStartDate}
-                  initialMonth={convening.evaluationStartDate}
+                  fromMonth={dayjs(convening?.evaluationStartDate).toDate()}
+                  initialMonth={dayjs(convening?.evaluationStartDate).toDate()}
                   locale="es"
                   months={MONTHS}
                   showWeekDays
@@ -79,7 +137,7 @@ const UpdateConvening: React.FC = () => {
                   }}
                   disabledDays={[
                     {
-                      before: convening.evaluationStartDate,
+                      before: dayjs(convening?.evaluationStartDate).toDate(),
                     },
                   ]}
                 />
@@ -89,7 +147,7 @@ const UpdateConvening: React.FC = () => {
                 <DayPicker
                   selectedDays={endDate}
                   canChangeMonth
-                  fromMonth={convening.evaluationStartDate}
+                  fromMonth={dayjs(convening?.evaluationStartDate).toDate()}
                   month={endDate}
                   locale="es"
                   months={MONTHS}

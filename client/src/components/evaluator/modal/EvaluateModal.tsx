@@ -24,7 +24,7 @@ const EvaluateModal: React.FC<IProps> = (props: IProps) => {
 
   const { user } = useAuth();
 
-  const { name, familyName } = user;
+  const { givenName, familyName } = user;
 
   const onDrop = useCallback(acceptedFiles => {
     if (acceptedFiles.length === 0) {
@@ -62,11 +62,11 @@ const EvaluateModal: React.FC<IProps> = (props: IProps) => {
       <div className="evaluateModal">
         <h3>{convening}</h3>
         <h2>
-          Rúbrica virtual - EVALUACIÓN de {name} {familyName}
+          Rúbrica virtual - EVALUACIÓN de {givenName} {familyName}
         </h2>
         <div className="evaluateModal-info">
           <span>
-            <strong> Solicitante:</strong> {application.name} {application.lastName}
+            <strong> Solicitante:</strong> {application.name}
           </span>
         </div>
         <div className="evaluateModal-data">
