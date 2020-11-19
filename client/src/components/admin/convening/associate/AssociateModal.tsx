@@ -1,19 +1,30 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import PrimaryButton from '../../../buttons/PrimaryButton';
 import { useDropzone } from 'react-dropzone';
+import Swal from 'sweetalert2';
+import { useHistory } from 'react-router-dom';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { GET_CONVENINGS } from '../convening.queries';
+import { GET_APPLICATIONS } from '../../applications/applications.queries';
+import {
+  ASSOCIATE_APPLICATIONS,
+  ASSOCIATE_AREAS,
+  ASSOCIATE_EVALUATORS,
+} from './associate.mutations';
 import SpringModal from '../../../modal/Modal';
+import SecondaryButton from '../../../buttons/SecondaryButton';
+import { AREAS, EVALUATORS, APPLICATIONS } from '../convening.types';
+import PrimaryButton from '../../../buttons/PrimaryButton';
 import {
   baseStyle,
   activeStyle,
   acceptStyle,
   rejectStyle,
 } from '../../../../utils/dropzone/styles';
-import SecondaryButton from '../../../buttons/SecondaryButton';
-import { AREAS, EVALUATORS, APPLICATIONS } from '../convening.types';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import Spinner from '../../../../utils/spinner/Spinner';
 import './associateModal.css';
 
 interface IProps {
@@ -25,6 +36,53 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
   const { isOpen, handleClose, association } = props;
   const [file, setFile] = useState<File>(null);
   const [error, setError] = useState<string>('');
+  const [convening, setConvening] = useState(undefined);
+  const history = useHistory();
+
+  const { data, loading } = useQuery(GET_CONVENINGS, {
+    fetchPolicy: 'cache-and-network',
+    onError: () => {
+      Swal.fire({
+        title: 'Error cargando convocatorias',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+    },
+    onCompleted: () => {
+      if (data.convenings.length > 0) {
+        setConvening(data.convenings[0]);
+      }
+    },
+  });
+
+  const convenings = data ? data.convenings : [];
+
+  const [associateApplications] = useMutation(ASSOCIATE_APPLICATIONS, {
+    refetchQueries: [
+      {
+        query: GET_CONVENINGS,
+      },
+      {
+        query: GET_APPLICATIONS,
+      },
+    ],
+  });
+
+  const [associateEvaluators] = useMutation(ASSOCIATE_EVALUATORS, {
+    refetchQueries: [
+      {
+        query: GET_CONVENINGS,
+      },
+    ],
+  });
+
+  const [associateAreas] = useMutation(ASSOCIATE_AREAS, {
+    refetchQueries: [
+      {
+        query: GET_CONVENINGS,
+      },
+    ],
+  });
 
   const associationToString = (a: number) => {
     switch (a) {
@@ -38,26 +96,6 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
         return 'NULL';
     }
   };
-
-  const convenings = [
-    {
-      id: '1',
-      name: 'Conv1',
-    },
-    {
-      id: '2',
-      name: 'Conv2',
-    },
-    {
-      id: '3',
-      name: 'Conv3',
-    },
-    {
-      id: '4',
-      name: 'Conv4',
-    },
-  ];
-  const [convening, setConvening] = useState(convenings[0].id);
 
   const onDrop = useCallback(acceptedFiles => {
     if (acceptedFiles.length === 0) {
@@ -83,6 +121,86 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
     [isDragActive, isDragReject, isDragAccept],
   );
 
+  const handleSubmit = async () => {
+    if (association === AREAS) {
+      try {
+        await associateAreas({
+          variables: {
+            input: {
+              files: [file],
+            },
+            id: convening?.id,
+          },
+        });
+        Swal.fire({
+          title: `Se han actualizado las areas para la convocatoria ${convening.name}`,
+          icon: 'success',
+          confirmButtonText: 'Ok',
+        }).then(() => {
+          history.push('/admin/convocatorias/lista');
+        });
+      } catch (e) {
+        Swal.fire({
+          title: 'Hubo un error',
+          icon: 'error',
+          confirmButtonText: 'Ok',
+        });
+      }
+    } else if (association === APPLICATIONS) {
+      try {
+        await associateApplications({
+          variables: {
+            input: {
+              files: [file],
+            },
+            id: convening?.id,
+          },
+        });
+        Swal.fire({
+          title: `Se han actualizado las areas para la convocatoria ${convening.name}`,
+          icon: 'success',
+          confirmButtonText: 'Ok',
+        }).then(() => {
+          history.push('/admin/convocatorias/lista');
+        });
+      } catch (e) {
+        Swal.fire({
+          title: 'Hubo un error',
+          icon: 'error',
+          confirmButtonText: 'Ok',
+        });
+      }
+    } else if (association === EVALUATORS) {
+      try {
+        await associateEvaluators({
+          variables: {
+            input: {
+              files: [file],
+            },
+            id: convening?.id,
+          },
+        });
+        Swal.fire({
+          title: `Se han actualizado las areas para la convocatoria ${convening.name}`,
+          icon: 'success',
+          confirmButtonText: 'Ok',
+        }).then(() => {
+          history.push('/admin/convocatorias/lista');
+        });
+      } catch (e) {
+        Swal.fire({
+          title: 'Hubo un error',
+          icon: 'error',
+          confirmButtonText: 'Ok',
+        });
+      }
+    }
+  };
+
+  if (loading) {
+    return <Spinner size={50} />;
+  }
+
   return (
     <SpringModal
       isOpen={isOpen}
@@ -100,9 +218,10 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
           <Select
             labelId="convening-select-label"
             id="convening-select"
-            value={convening}
+            value={convening?.id}
             onChange={e => {
-              setConvening(e.target.value as string);
+              const conv = convenings.find(c => String(c.id) === e.target.value);
+              setConvening(conv);
             }}
             label="Convocatoria"
           >
@@ -140,11 +259,13 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
           <PrimaryButton
             text="Asociar"
             handleClick={() => {
-              handleClose();
-              setFile(null);
-              setError('');
+              handleSubmit().then(() => {
+                handleClose();
+                setFile(null);
+                setError('');
+              });
             }}
-            disabled={!file}
+            disabled={!file || !convening}
           />
         </div>
       </div>

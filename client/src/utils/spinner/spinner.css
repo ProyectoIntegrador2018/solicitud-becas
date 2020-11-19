@@ -1,0 +1,12 @@
+.spinner {
+  border-radius: 50px;
+  padding: 30px;
+  background: white;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-box-shadow: 0px 5px 16px #c2bdbd;
+  -moz-box-shadow: 0px 5px 16px #c2bdbd;
+  box-shadow: 0px 5px 16px #c2bdbd;
+}

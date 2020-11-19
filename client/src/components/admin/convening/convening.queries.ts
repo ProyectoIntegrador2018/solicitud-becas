@@ -1,16 +1,33 @@
 import gql from 'graphql-tag';
 
-const GET_CONVENINGS = gql`
+export const GET_CONVENINGS = gql`
   query convenings {
     convenings @rest(type: "[Convening]", path: "convocatorias/") {
       id
       name
       evaluationStartDate
       evaluationEndDate
+      areas
+      solicitudes
+      evaluadores
       updatedAt
       createdAt
     }
   }
 `;
 
-export default GET_CONVENINGS;
+export const GET_CONVENING = gql`
+  query convening($id: String!) {
+    convening(id: $id) @rest(type: "Convening", path: "convocatorias/{args.id}/") {
+      id
+      name
+      evaluationStartDate
+      evaluationEndDate
+      areas
+      solicitudes
+      evaluadores
+      updatedAt
+      createdAt
+    }
+  }
+`;

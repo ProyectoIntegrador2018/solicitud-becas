@@ -10,7 +10,7 @@ const Home: React.FC = () => {
   const { user } = useAuth();
   return (
     <div className="home-layout">
-      <Title text={user.name} size={1} />
+      <Title text={user.givenName} size={1} />
       <Link to="/registrar-areas">
         <PrimaryButton
           text="Botón primario --> click para form registro de areas"

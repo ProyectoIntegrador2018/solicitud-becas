@@ -1,14 +1,13 @@
 import React from 'react';
 import './header.css';
-import { useHistory, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import useAuth from '../../utils/hooks/useAuth';
 import SecondaryButton from '../buttons/SecondaryButton';
 import useWindowWidth from '../../utils/hooks/useWindowWidth';
 import Logo from '../../assets/images/logo-i2t2.png';
 
 const Header: React.FC = () => {
-  const history = useHistory();
-  const { admin, authenticated } = useAuth();
+  const { admin, authenticated, logout } = useAuth();
   const window = useWindowWidth();
   const getMarginRight = () => {
     if (window > 1000) return '75px';
@@ -29,7 +28,7 @@ const Header: React.FC = () => {
       {window > 700 && (
         <h2 style={{ marginRight: getMarginRight() }}>{admin ? 'ADMINISTRADOR' : 'EVALUADOR'}</h2>
       )}
-      <SecondaryButton text="regresar" handleClick={() => history.goBack()} />
+      <SecondaryButton text="Logout" handleClick={logout} />
     </div>
   );
 };

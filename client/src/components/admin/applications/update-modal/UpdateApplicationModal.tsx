@@ -50,7 +50,7 @@ const UpdateApplicationModal: React.FC<IProps> = (props: IProps) => {
       }}
     >
       <div className="updateApplication-layout">
-        <Title text={`Aplicación de ${application.name} ${application.lastName}`} size={2} />
+        <Title text={`Aplicación de ${application.name}`} size={2} />
         <div {...getRootProps({ style })} className="updateApplication-dropzone">
           <input {...getInputProps()} />
           <p>Arrastra los archivos o haz click para seleccionarlos</p>

@@ -1,10 +1,18 @@
 import { IEvaluation } from '../../evaluator/evaluator.types';
+import { IConvening } from '../convening/convening.types';
 
 export interface IApplication {
   id: string;
   name: string;
-  lastName: string;
-  convening: string;
-  area: string;
-  evaluations: IEvaluation[];
+  convocatoria?: IConvening;
+  area?: IArea;
+  evaluaciones?: IEvaluation[];
+}
+
+export interface IArea {
+  convocatoriaId: string;
+  createdAt: string;
+  id: string;
+  name: string;
+  updatedAt: string;
 }

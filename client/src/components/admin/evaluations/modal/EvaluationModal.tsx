@@ -15,11 +15,11 @@ interface IProps {
 const EvaluationModal: React.FC<IProps> = (props: IProps) => {
   const { application, isOpen, handleClose, evaluationIndex, convening } = props;
 
-  const { name: evName, familyName: evLastName } = application.evaluations[
+  const { givenName: evName, familyName: evLastName } = application.evaluaciones[
     evaluationIndex
   ].evaluator;
 
-  const { grade, comment } = application.evaluations[evaluationIndex];
+  const { grade, comment } = application.evaluaciones[evaluationIndex];
 
   return (
     <SpringModal isOpen={isOpen} handleClose={handleClose}>
@@ -28,7 +28,7 @@ const EvaluationModal: React.FC<IProps> = (props: IProps) => {
         <h2>Rúbrica virtual – EVALUACIÓN RECIBIDA</h2>
         <div className="evaluationModal-info">
           <span>
-            <strong> Solicitante:</strong> {application.name} {application.lastName}
+            <strong> Solicitante:</strong> {application.name}
           </span>
           <span>
             <strong>Evaluador:</strong> {evName} {evLastName}

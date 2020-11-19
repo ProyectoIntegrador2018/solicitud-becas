@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import Swal from 'sweetalert2';
-import nextId from 'react-id-generator';
+import uuid from 'react-uuid';
 import DayPicker from 'react-day-picker/DayPicker';
 import PrimaryButton from '../../../buttons/PrimaryButton';
 import SecondaryButton from '../../../buttons/SecondaryButton';
@@ -20,7 +20,7 @@ import {
 import createConveningSchema from './createConvening.schema';
 import { useMutation } from '@apollo/react-hooks';
 import { CREATE_CONVENING } from '../convening.mutations';
-import GET_CONVENINGS from '../convening.queries';
+import { GET_CONVENINGS } from '../convening.queries';
 import 'react-day-picker/lib/style.css';
 import './createConvening.css';
 
@@ -43,10 +43,10 @@ const CreateConvening: React.FC = () => {
       await createConvening({
         variables: {
           input: {
-            id: nextId(),
+            id: uuid(),
             name: values.name,
-            evaluationStartDate: startDate,
-            evaluationEndDate: endDate,
+            evaluationStartDate: String(startDate),
+            evaluationEndDate: String(endDate),
           },
         },
       });
@@ -54,6 +54,8 @@ const CreateConvening: React.FC = () => {
         title: `Se ha creado la convocatoria ${values.name}`,
         icon: 'success',
         confirmButtonText: 'Ok',
+      }).then(() => {
+        history.push('/admin/convocatorias/lista');
       });
     } catch (e) {
       console.log(e.statusCode);
@@ -73,7 +75,7 @@ const CreateConvening: React.FC = () => {
         initialValues={{ name: '' }}
         validationSchema={createConveningSchema}
         enableReinitialize
-        isInitialValid={false}
+        initialErrors={{ name: 'El nombre es requerido' }}
         onSubmit={handleSubmit}
       >
         {({ isValid, errors }) => (

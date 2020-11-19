@@ -2,9 +2,7 @@ import { GoogleLoginResponse } from 'react-google-login';
 
 export interface IGoogleUser {
   googleId: string;
-  imageUrl: string;
   email: string;
-  name: string;
   givenName: string;
   familyName: string;
 }
@@ -14,19 +12,19 @@ export interface IAuthContext {
   admin: boolean;
   evaluator: boolean;
   authenticated: boolean;
-  loading: boolean;
-  accessToken: string;
   convenings?: string[];
+  loading: boolean;
   logout: () => void;
   login: (response: GoogleLoginResponse) => void;
+  fetchSession: (accessToken: string, tokenId: string) => Promise<Response>;
+  setState: (value: React.SetStateAction<IAuthState>) => void;
 }
 
 export interface IAuthState {
+  loading: boolean;
   user: IGoogleUser;
   admin: boolean;
   evaluator: boolean;
   authenticated: boolean;
-  loading: boolean;
-  accessToken: string;
   convenings?: string[];
 }

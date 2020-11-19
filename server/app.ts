@@ -1,27 +1,27 @@
-import express = require("express");
-import path from "path";
-import { OAuth2Client } from "google-auth-library";
-import fileUpload from "express-fileupload";
-import csvParse from "csv-parse";
-import cors from "cors";
+import express = require('express');
+import path from 'path';
+import { OAuth2Client } from 'google-auth-library';
+import fileUpload from 'express-fileupload';
+import csvParse from 'csv-parse';
+import cors from 'cors';
 
-import { db } from "./models/index";
+import { db } from './models/index';
 
 const CLIENT_ID =
-  "401453194268-j77retfhpocjvd3lhrniu3c35asluk9s.apps.googleusercontent.com";
+  '401453194268-j77retfhpocjvd3lhrniu3c35asluk9s.apps.googleusercontent.com';
 
 const client = new OAuth2Client(CLIENT_ID);
 
 async function verify(token: string) {
   const ticket = await client.verifyIdToken({
     idToken: token,
-    audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+    audience: CLIENT_ID // Specify the CLIENT_ID of the app that accesses the backend
     // Or, if multiple clients access the backend:
     //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
   });
   const payload = ticket.getPayload();
   if (payload === undefined) {
-    throw new Error("payload from google when verifying was undefined");
+    throw new Error('payload from google when verifying was undefined');
   }
   return payload;
 }
@@ -42,10 +42,10 @@ app.use(fileUpload());
 
 app.use(cors());
 
-app.post("/user-log-in", async function (req, res) {
+app.post('/user-log-in', async function (req, res) {
   const userLogIn = req.body as UserLogIn; // does this fail if body is not of type UserLogIn?
 
-  const payload = await verify(userLogIn.tokenId).catch((reason) => {
+  const payload = await verify(userLogIn.tokenId).catch(reason => {
     console.error(reason);
     res.status(401); //Unathorized
     res.json(reason);
@@ -66,7 +66,7 @@ app.post("/user-log-in", async function (req, res) {
   const authEmail = await db.AuthorizedEmail.findByPk(payload.email);
   if (authEmail === null) {
     res.status(401);
-    res.json({ reason: "email is not in the authorized list of emails" });
+    res.json({ reason: 'email is not in the authorized list of emails' });
     return;
   }
 
@@ -77,8 +77,8 @@ app.post("/user-log-in", async function (req, res) {
         googleId: payload.sub,
         givenName: payload.given_name,
         familyName: payload.family_name,
-        email: payload.email,
-      },
+        email: payload.email
+      }
     });
     res.json(user);
   } catch (reason) {
@@ -88,13 +88,13 @@ app.post("/user-log-in", async function (req, res) {
   }
 });
 
-app.get("/users", async function (req, res) {
+app.get('/users', async function (req, res) {
   const users = await db.User.findAll();
 
   res.json(users);
 });
 
-app.get("/users/:id", async function (req, res) {
+app.get('/users/:id', async function (req, res) {
   try {
     const id = req.params.id;
     console.log(id);
@@ -106,9 +106,9 @@ app.get("/users/:id", async function (req, res) {
   }
 });
 
-app.post("/auth-emails", async function (req, res) {
-  const emails = (req.body as [string]).map((e) => ({
-    email: e,
+app.post('/auth-emails', async function (req, res) {
+  const emails = (req.body as [string]).map(e => ({
+    email: e
   }));
 
   // AuthorizedEmail.bulkCreate(emails, { ignoreDuplicates: true });
@@ -118,29 +118,29 @@ app.post("/auth-emails", async function (req, res) {
     // ignore it, if not, insert it with the correct createdAt/updatedAt dates.
     // I tried `ignoreDuplicates` option, it didn't update duplicated values
     // correctly, but it gave back the wrong createdAt/updatedAt dates
-    updateOnDuplicate: ["email"],
+    updateOnDuplicate: ['email']
   });
 
   res.json(createdEmails);
 });
 
-app.get("/auth-emails", async function (_req, res) {
+app.get('/auth-emails', async function (_req, res) {
   let emails = await db.AuthorizedEmail.findAll();
   res.json(emails);
 });
 
-app.delete("/auth-emails", async function (req, res) {
+app.delete('/auth-emails', async function (req, res) {
   let emails = req.body as [string];
   let destroyedCount = await db.AuthorizedEmail.destroy({
-    where: { email: emails },
+    where: { email: emails }
   });
   res.json({ emailsRemoved: destroyedCount });
 });
 
-app.post("/convocatorias", async function (req, res) {
+app.post('/convocatorias', async function (req, res) {
   try {
     const createdConvocatoria = await db.Convocatoria.create(req.body, {
-      include: db.Area,
+      include: db.Area
     });
 
     res.json(createdConvocatoria);
@@ -151,10 +151,10 @@ app.post("/convocatorias", async function (req, res) {
   }
 });
 
-app.patch("/convocatorias", async function (req, res) {
+app.patch('/convocatorias', async function (req, res) {
   try {
     let updatedConvocatoria = await db.Convocatoria.update(req.body, {
-      where: req.body.id,
+      where: req.body.id
     });
     res.json(updatedConvocatoria);
   } catch (e) {
@@ -163,10 +163,10 @@ app.patch("/convocatorias", async function (req, res) {
   }
 });
 
-app.get("/convocatorias", async function (req, res) {
+app.get('/convocatorias', async function (req, res) {
   try {
     let convocatorias = await db.Convocatoria.findAll({
-      include: [{ model: db.Area, include: [db.Solicitud] }, db.Solicitud],
+      include: [{ model: db.Area, include: [db.Solicitud] }, db.Solicitud]
     });
     res.json(convocatorias);
   } catch (e) {
@@ -176,23 +176,23 @@ app.get("/convocatorias", async function (req, res) {
   }
 });
 
-app.get("/convocatorias/:id", async function (req, res) {
+app.get('/convocatorias/:id', async function (req, res) {
   const id = req.params.id;
   const convocatoria = await db.Convocatoria.findByPk(id);
   res.json(convocatoria);
 });
 
-app.delete("/convocatorias", async function (req, res) {
-  let ids = req.body as [string];
+app.delete('/convocatorias/:id', async function (req, res) {
+  let id_ = req.params.id as string;
   let destroyedCount = await db.Convocatoria.destroy({
-    where: { id: ids },
+    where: { id: id_ }
   });
   res.json({ deleted: destroyedCount });
 });
 
 // THIS WILL FIRST REMOVE ALL AREAS RELATED TO THIS CONVOCATORIA, THEN IT WILL
 // ADD THE NEW AREAS
-app.post("/convocatorias/:id/areas", async function (req, res) {
+app.post('/convocatorias/:id/areas', async function (req, res) {
   const id = req.params.id;
 
   const convocatoria = await db.Convocatoria.findByPk(id);
@@ -201,7 +201,7 @@ app.post("/convocatorias/:id/areas", async function (req, res) {
   }
 
   if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send("No files were uploaded.");
+    return res.status(400).send('No files were uploaded.');
   }
 
   const first = Object.values(req.files)[0];
@@ -211,15 +211,15 @@ app.post("/convocatorias/:id/areas", async function (req, res) {
       return res.status(400).send(`csv parser error: ${err}`);
     }
     if (records.length <= 1) {
-      return res.status(400).send("empty csv or csv with only a header");
+      return res.status(400).send('empty csv or csv with only a header');
     }
 
     const rows = records.slice(1);
 
-    const newAreas = rows.map((r) => ({
+    const newAreas = rows.map(r => ({
       id: String(r[0]).trim(),
       name: String(r[1]).trim(),
-      convocatoriaId: id,
+      convocatoriaId: id
     }));
 
     try {
@@ -235,7 +235,7 @@ app.post("/convocatorias/:id/areas", async function (req, res) {
   });
 });
 
-app.post("/convocatorias/:id/solicitudes", async function (req, res) {
+app.post('/convocatorias/:id/solicitudes', async function (req, res) {
   const id = req.params.id;
 
   const convocatoria = await db.Convocatoria.findByPk(id);
@@ -244,7 +244,7 @@ app.post("/convocatorias/:id/solicitudes", async function (req, res) {
   }
 
   if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send("No files were uploaded.");
+    return res.status(400).send('No files were uploaded.');
   }
 
   const first = Object.values(req.files)[0];
@@ -254,16 +254,16 @@ app.post("/convocatorias/:id/solicitudes", async function (req, res) {
       return res.status(400).send(`csv parser error: ${err}`);
     }
     if (records.length <= 1) {
-      return res.status(400).send("empty csv or csv with only a header");
+      return res.status(400).send('empty csv or csv with only a header');
     }
 
     const rows = records.slice(1);
 
-    const newSolicitudes = rows.map((r) => ({
+    const newSolicitudes = rows.map(r => ({
       id: String(r[0]).trim(),
       name: String(r[1]).trim(),
       areaId: String(r[2]).trim(),
-      convocatoriaId: id,
+      convocatoriaId: id
     }));
 
     try {
@@ -277,11 +277,11 @@ app.post("/convocatorias/:id/solicitudes", async function (req, res) {
   });
 });
 
-app.post("/solicitudes/:id/evaluacion", async function (req, res) {
+app.post('/solicitudes/:id/evaluacion', async function (req, res) {
   try {
     const id = req.params.id;
     const solicitud = await db.Solicitud.findByPk(id, {
-      include: [db.Evaluacion],
+      include: [db.Evaluacion]
     });
     const evaluacion = await db.Evaluacion.create(req.body);
     await solicitud?.addEvaluacione(evaluacion);
@@ -294,10 +294,10 @@ app.post("/solicitudes/:id/evaluacion", async function (req, res) {
   }
 });
 
-app.get("/solicitudes", async function (req, res) {
+app.get('/solicitudes', async function (req, res) {
   try {
     const solicitudes = await db.Solicitud.findAll({
-      include: [db.Area, db.Convocatoria, db.Evaluacion],
+      include: [db.Area, db.Convocatoria, db.Evaluacion]
     });
     res.json(solicitudes);
   } catch (e) {
@@ -307,11 +307,11 @@ app.get("/solicitudes", async function (req, res) {
   }
 });
 
-app.delete("/solicitudes", async function (req, res) {
+app.delete('/solicitudes/:id', async function (req, res) {
   try {
-    const ids = req.body as [string];
+    const id_ = req.params.id as string;
     const destroyedCount = await db.Solicitud.destroy({
-      where: { id: ids },
+      where: { id: id_ }
     });
     res.json({ deleted: destroyedCount });
   } catch (e) {
@@ -321,7 +321,7 @@ app.delete("/solicitudes", async function (req, res) {
   }
 });
 
-app.post("/convocatorias/:id/evaluadores", async function (req, res) {
+app.post('/convocatorias/:id/evaluadores', async function (req, res) {
   const id = req.params.id;
 
   const convocatoria = await db.Convocatoria.findByPk(id);
@@ -330,7 +330,7 @@ app.post("/convocatorias/:id/evaluadores", async function (req, res) {
   }
 
   if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send("No files were uploaded.");
+    return res.status(400).send('No files were uploaded.');
   }
 
   const first = Object.values(req.files)[0];
@@ -340,20 +340,20 @@ app.post("/convocatorias/:id/evaluadores", async function (req, res) {
       return res.status(400).send(`csv parser error: ${err}`);
     }
     if (records.length <= 1) {
-      return res.status(400).send("empty csv or csv with only a header");
+      return res.status(400).send('empty csv or csv with only a header');
     }
 
     const rows = records.slice(1);
 
-    const emails = rows.map((r) => ({ email: String(r[0]).trim() }));
+    const emails = rows.map(r => ({ email: String(r[0]).trim() }));
 
     try {
       const authEmails = await db.AuthorizedEmail.bulkCreate(emails, {
-        updateOnDuplicate: ["email"],
+        updateOnDuplicate: ['email']
       });
       await convocatoria.addEmailEvaluadores(authEmails);
       await convocatoria.reload({
-        include: { model: db.AuthorizedEmail, as: "emailEvaluadores" },
+        include: { model: db.AuthorizedEmail, as: 'emailEvaluadores' }
       });
       res.json(convocatoria);
     } catch (e) {
@@ -368,22 +368,22 @@ app.post("/convocatorias/:id/evaluadores", async function (req, res) {
 // (special care is needed since we use client side routing)
 // https://create-react-app.dev/docs/deployment#serving-apps-with-client-side-routing
 
-app.use(express.static(path.join(__dirname, "../client_build")));
+app.use(express.static(path.join(__dirname, '../client_build')));
 
-app.get("/*", function (_req, res) {
+app.get('/*', function (_req, res) {
   res.sendFile(clientIndexPath);
 });
 
-const clientIndexPath = path.join(__dirname, "../client_build", "index.html");
+const clientIndexPath = path.join(__dirname, '../client_build', 'index.html');
 
 let port = process.env.PORT;
-if (port == null || port == "") {
-  port = "8080";
+if (port == null || port == '') {
+  port = '8080';
 }
 
 const server = app.listen(port, function () {
   console.log(`Example app listening on port ${port}!`);
-  console.log("client app index.html path: ", clientIndexPath);
+  console.log('client app index.html path: ', clientIndexPath);
 });
 
 export default server;

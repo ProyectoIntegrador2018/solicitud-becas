@@ -2,12 +2,13 @@ import React from 'react';
 import useAuth from '../../../utils/hooks/useAuth';
 import Title from '../../title/Title';
 import GoogleButton from '../google/GoogleButton';
-import './login.css';
 import FieldLabel from '../../labels/field-label/FieldLabel';
+import Spinner from '../../../utils/spinner/Spinner';
+import './login.css';
 
 const Login: React.FC = () => {
   const { loading } = useAuth();
-  if (loading) return <div>Cargando...</div>;
+  if (loading) return <Spinner />;
   return (
     <div className="login-layout">
       <div className="login-title">

@@ -9,12 +9,9 @@ export interface IConvening {
   name: string;
   evaluationStartDate: Date;
   evaluationEndDate: Date;
-  areasCount: number;
-  evaluatorsCount: number;
-  applicationsCount: number;
-  applications: IApplication[];
-  areas: string[];
-  evaluators: IEvaluator[];
+  solicitudes?: IApplication[];
+  areas?: string[];
+  evaluadores?: IEvaluator[];
   createdAt: Date;
   updatedAt: Date;
 }
