@@ -25,8 +25,8 @@ const customFetch = (uri, options) => {
 };
 
 const restLink = new RestLink({
-  uri: 'our endpoint',
-  credentials: 'include',
+  uri: 'http://192.168.10.182:8080/',
+  credentials: 'same-origin',
   customFetch,
   bodySerializers: {
     fileEncode: (data: any, headers: Headers) => {

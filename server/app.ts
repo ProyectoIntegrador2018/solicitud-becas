@@ -3,6 +3,7 @@ import path from "path";
 import { OAuth2Client } from "google-auth-library";
 import fileUpload from "express-fileupload";
 import csvParse from "csv-parse";
+import cors from "cors";
 
 import { db } from "./models/index";
 
@@ -38,6 +39,8 @@ app.use(express.json());
 
 // express middle-ware to handle files
 app.use(fileUpload());
+
+app.use(cors());
 
 app.post("/user-log-in", async function (req, res) {
   const userLogIn = req.body as UserLogIn; // does this fail if body is not of type UserLogIn?

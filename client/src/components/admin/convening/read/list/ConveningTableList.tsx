@@ -6,9 +6,26 @@ import { Link } from 'react-router-dom';
 import tableIcons from '../../../../../utils/table/TableIcons';
 import PrimaryButton from '../../../../buttons/PrimaryButton';
 import SecondaryButton from '../../../../buttons/SecondaryButton';
+import { useQuery } from '@apollo/react-hooks';
+import GET_CONVENINGS from '../../convening.queries';
 import './conveningTableList.css';
 
 const ConveningTableList: React.FC = () => {
+  const { data } = useQuery(GET_CONVENINGS, {
+    fetchPolicy: 'cache-and-network',
+    onError: () => {
+      Swal.fire({
+        title: 'Error cargando convocatorias',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+    },
+  });
+
+  const convenings = data ? data.convenings : [];
+
+  console.log(convenings);
+
   return (
     <div className="conveningTable-layout">
       <MaterialTable

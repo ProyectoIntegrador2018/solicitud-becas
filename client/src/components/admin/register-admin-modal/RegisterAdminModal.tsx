@@ -29,7 +29,7 @@ const RegisterAdminModal: React.FC<IProps> = (props: IProps) => {
           console.log(values);
         }}
       >
-        {({ values, isValid, errors }) => (
+        {({ isValid, errors }) => (
           <Form className="registerAdminModal-layout">
             <Title text="Registra un administrador" />
             <div className="registerAdminModal-field">
