@@ -7,6 +7,7 @@ import { onError, ErrorResponse } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
 import jsonToFormData from 'json-form-data';
 import useAuth from '../../utils/hooks/useAuth';
+import { getAPI } from '../../config';
 
 const cache = new InMemoryCache();
 
@@ -25,7 +26,7 @@ const customFetch = (uri, options) => {
 };
 
 const restLink = new RestLink({
-  uri: 'http://192.168.10.182:8080/',
+  uri: getAPI(),
   credentials: 'same-origin',
   customFetch,
   bodySerializers: {

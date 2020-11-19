@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { IAuthContext, IAuthState } from './auth.types';
 import { GoogleLoginResponse } from 'react-google-login';
 import Swal from 'sweetalert2';
+import { getAPI } from '../../config';
 
 interface IProps {
   children: React.ReactNode;
@@ -35,7 +36,7 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
   };
 
   const fetchSession = async (accessToken: string, tokenId: string) => {
-    return fetch('http://192.168.10.182:8080/user-log-in/', {
+    return fetch(`${getAPI()}user-log-in/`, {
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
