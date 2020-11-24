@@ -10,8 +10,17 @@ export interface IConvening {
   evaluationStartDate: Date;
   evaluationEndDate: Date;
   solicitudes?: IApplication[];
-  areas?: string[];
+  areas?: IArea[];
   evaluadores?: IEvaluator[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IArea {
+  convocatoriaId: string;
+  createdAt: string;
+  id: string;
+  name: string;
+  solicitudes: IApplication[];
+  updatedAt: string;
 }
