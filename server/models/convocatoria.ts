@@ -17,6 +17,7 @@ export interface ConvocatoriaAttributes {
   name: string;
   evaluationStartDate: Date;
   evaluationEndDate: Date;
+  areas: [AreaModel];
 }
 
 export interface ConvocatoriaModel

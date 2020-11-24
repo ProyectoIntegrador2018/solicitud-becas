@@ -196,7 +196,10 @@ app.patch("/convocatorias", async function (req, res) {
 app.get("/convocatorias", async function (req, res) {
   try {
     let convocatorias = await db.Convocatoria.findAll({
-      include: [{ model: db.Area, include: [db.Solicitud] }, db.Solicitud],
+      include: [
+        { all: true },
+        { model: db.Evaluador, include: ["areas", db.User] },
+      ],
     });
     res.json(convocatorias);
   } catch (e) {
@@ -383,7 +386,7 @@ app.post("/convocatorias/:id/evaluadores", async function (req, res) {
       });
       await convocatoria.addEmailEvaluadores(authEmails);
       await convocatoria.reload({
-        include: { model: db.AuthorizedEmail, as: "emailEvaluadores" },
+        include: { model: db.AuthorizedEmail },
       });
       res.json(convocatoria);
     } catch (e) {
@@ -392,6 +395,28 @@ app.post("/convocatorias/:id/evaluadores", async function (req, res) {
       res.json(e);
     }
   });
+});
+
+app.post("/assign-evaluador", async function (req, res) {
+  // expects a json object with:
+  // {
+  // convocatoriaId: string,
+  // userGoogleId: string,
+  // areas: [{ id: "Q" }]
+  // }
+  // and will create a new "Evaluador" object that relates a user with a
+  // convocatoria, along with the areas assigned to it
+  try {
+    const evaluador = req.body;
+
+    const newEvaluador = await db.Evaluador.create(evaluador);
+    await newEvaluador.setAreas(evaluador.areas.map((x) => x.id));
+    res.json(newEvaluador);
+  } catch (e) {
+    console.error(e);
+    res.status(500); // Internal Server Error
+    res.json(e);
+  }
 });
 
 // next lines are used to serve the built client app
