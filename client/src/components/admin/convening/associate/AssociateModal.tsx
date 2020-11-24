@@ -157,7 +157,7 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
           },
         });
         Swal.fire({
-          title: `Se han actualizado las areas para la convocatoria ${convening.name}`,
+          title: `Se han actualizado las solicitudes para la convocatoria ${convening.name}`,
           icon: 'success',
           confirmButtonText: 'Ok',
         }).then(() => {
@@ -181,7 +181,7 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
           },
         });
         Swal.fire({
-          title: `Se han actualizado las areas para la convocatoria ${convening.name}`,
+          title: `Se han actualizado los evaluadores para la convocatoria ${convening.name}`,
           icon: 'success',
           confirmButtonText: 'Ok',
         }).then(() => {

@@ -1,4 +1,7 @@
 import React from 'react';
+import Swal from 'sweetalert2';
+import { useHistory } from 'react-router-dom';
+import { useMutation } from '@apollo/react-hooks';
 import PrimaryButton from '../../buttons/PrimaryButton';
 import { Formik, Form, Field } from 'formik';
 import SpringModal from '../../modal/Modal';
@@ -6,8 +9,9 @@ import SecondaryButton from '../../buttons/SecondaryButton';
 import Title from '../../title/Title';
 import TextInput from '../../input/TextInput';
 import registerAdminModalSchema from './registerAdminModal.schema';
-import './registerAdminModal.css';
 import FieldLabel from '../../labels/field-label/FieldLabel';
+import { MAKE_ADMIN, REGISTER_EMAIL } from '../admin.mutations';
+import './registerAdminModal.css';
 
 interface IProps {
   isOpen: boolean;
@@ -16,6 +20,44 @@ interface IProps {
 
 const RegisterAdminModal: React.FC<IProps> = (props: IProps) => {
   const { isOpen, handleClose } = props;
+  const history = useHistory();
+
+  const [makeAdmin] = useMutation(MAKE_ADMIN);
+  const [registerMail] = useMutation(REGISTER_EMAIL);
+
+  const handleSubmit = async (values, formik) => {
+    try {
+      await registerMail({
+        variables: {
+          input: {
+            emails: [values.email],
+          },
+        },
+      });
+      await makeAdmin({
+        variables: {
+          input: {
+            emails: [values.email],
+          },
+        },
+      });
+      Swal.fire({
+        title: `Se ha registrado el correo ${values.email} como admin`,
+        icon: 'success',
+        confirmButtonText: 'Ok',
+      }).then(() => {
+        history.push('/');
+      });
+    } catch (e) {
+      Swal.fire({
+        title: `Hubo un error`,
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+      formik.setSubmitting(false);
+    }
+    handleClose();
+  };
 
   return (
     <SpringModal isOpen={isOpen} handleClose={handleClose}>
@@ -25,11 +67,9 @@ const RegisterAdminModal: React.FC<IProps> = (props: IProps) => {
         enableReinitialize
         validateOnBlur={false}
         isInitialValid={false}
-        onSubmit={values => {
-          console.log(values);
-        }}
+        onSubmit={handleSubmit}
       >
-        {({ isValid, errors }) => (
+        {({ isValid, errors, isSubmitting }) => (
           <Form className="registerAdminModal-layout">
             <Title text="Registra un administrador" />
             <div className="registerAdminModal-field">
@@ -43,7 +83,6 @@ const RegisterAdminModal: React.FC<IProps> = (props: IProps) => {
                     type="email"
                     size="l"
                     placeholder="ejemplo@gmail.com"
-                    error={errors?.email}
                   />
                 )}
               </Field>
@@ -53,7 +92,7 @@ const RegisterAdminModal: React.FC<IProps> = (props: IProps) => {
             </div>
             <div className="registerAdminModal-buttons">
               <SecondaryButton text="Cancelar" handleClick={handleClose} />
-              <PrimaryButton text="Registrar" type="submit" disabled={!isValid} />
+              <PrimaryButton text="Registrar" type="submit" disabled={!isValid || isSubmitting} />
             </div>
           </Form>
         )}

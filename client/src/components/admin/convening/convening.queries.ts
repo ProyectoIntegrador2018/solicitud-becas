@@ -12,6 +12,7 @@ export const GET_CONVENINGS = gql`
       evaluadores
       updatedAt
       createdAt
+      authorizedEmails
     }
   }
 `;
@@ -28,6 +29,7 @@ export const GET_CONVENING = gql`
       evaluadores
       updatedAt
       createdAt
+      authorizedEmails
     }
   }
 `;

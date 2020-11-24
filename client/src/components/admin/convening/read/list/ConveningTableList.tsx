@@ -116,6 +116,7 @@ const ConveningTableList: React.FC = () => {
             ...conv,
             areasCount: conv.areas?.length,
             applicationsCount: conv.solicitudes?.length,
+            evaluatorsCount: conv.evaluadores?.length,
           };
         })}
       />

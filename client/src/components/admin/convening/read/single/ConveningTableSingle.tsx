@@ -32,31 +32,34 @@ const ConveningTableSingle: React.FC = () => {
 
   console.log(convening);
 
-  const areaRows =
-    convening && convening.areas
-      ? convening.areas.map(area => {
-          return {
-            name: area.name,
-            evaluatorsCount: convening.evaluadores
-              ? convening.evaluadores.reduce(
-                  (x, evaluator) => x + (evaluator.areas.find(a => area.name === a) ? 1 : 0),
-                  0,
-                )
-              : 0,
-            applicationsCount: area.solicitudes.length,
-            evaluations3OrMore: area.solicitudes.reduce(
-              (x, sol) => x + (sol.area.name === area.name && sol.evaluaciones.length > 2 ? 1 : 0),
-              0,
-            ),
-            evaluations3OrLess: area.solicitudes.reduce(
-              (x, sol) => x + (sol.area === area && sol.evaluaciones.length <= 2 ? 1 : 0),
-              0,
-            ),
-          };
-        })
-      : [];
+  // const areaRows =
+  //   convening && convening.areas
+  //     ? convening.areas.map(area => {
+  //         return {
+  //           name: area.name,
+  //           evaluatorsCount: convening.evaluadores
+  //             ? convening.evaluadores.reduce(
+  //                 (x, evaluator) => x + (evaluator.areas.find(a => area.id === a.id) ? 1 : 0),
+  //                 0,
+  //               )
+  //             : 0,
+  //           applicationsCount: convening.solicitudes.reduce(
+  //             (x, sol) => x + (sol.areaId === area.id ? 1 : 0),
+  //             0,
+  //           ),
+  //           evaluations3OrMore: convening.solicitudes.reduce(
+  //             (x, sol) => x + (sol.areaId === area.id && convening.evaluaciones.length > 2 ? 1 : 0),
+  //             0,
+  //           ),
+  //           evaluations3OrLess: convening.solicitudes.reduce(
+  //             (x, sol) => x + (sol.areaId === area.id && convening.evaluaciones.length <= 2 ? 1 : 0),
+  //             0,
+  //           ),
+  //         };
+  //       })
+  //     : [];
 
-  // const areaRows = [];
+  const areaRows = [];
 
   if (loading) {
     return <Spinner />;

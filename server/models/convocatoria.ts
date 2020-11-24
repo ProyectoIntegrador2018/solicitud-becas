@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 import {
   Sequelize,
@@ -6,11 +6,11 @@ import {
   DataTypes,
   BuildOptions,
   HasManyRemoveAssociationsMixin,
-  BelongsToManyAddAssociationsMixin,
-} from "sequelize";
+  BelongsToManyAddAssociationsMixin
+} from 'sequelize';
 
-import { AreaModel } from "./area";
-import { AuthorizedEmailModel } from "./authorizedEmail";
+import { AreaModel } from './area';
+import { AuthorizedEmailModel } from './authorizedEmail';
 
 export interface ConvocatoriaAttributes {
   id: string;
@@ -24,7 +24,7 @@ export interface ConvocatoriaModel
   extends Model<ConvocatoriaAttributes>,
     ConvocatoriaAttributes {
   removeAreas: HasManyRemoveAssociationsMixin<AreaModel, string>;
-  addEmailEvaluadores: BelongsToManyAddAssociationsMixin<
+  addAuthorizedEmails: BelongsToManyAddAssociationsMixin<
     AuthorizedEmailModel,
     string
   >;
@@ -35,23 +35,23 @@ export type ConvocatoriaStatic = typeof Model & {
 };
 
 export function ConvocatoriaFactory(sequelize: Sequelize) {
-  return <ConvocatoriaStatic>sequelize.define("convocatorias", {
+  return <ConvocatoriaStatic>sequelize.define('convocatorias', {
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
-      allowNull: false,
+      allowNull: false
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     evaluationStartDate: {
       type: DataTypes.DATEONLY,
-      allowNull: false,
+      allowNull: false
     },
     evaluationEndDate: {
       type: DataTypes.DATEONLY,
-      allowNull: false,
-    },
+      allowNull: false
+    }
   });
 }

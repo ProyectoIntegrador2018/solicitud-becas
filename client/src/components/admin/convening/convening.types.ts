@@ -14,6 +14,7 @@ export interface IConvening {
   evaluadores?: IEvaluator[];
   createdAt: Date;
   updatedAt: Date;
+  authorizedEmails: any[];
 }
 
 export interface IArea {
