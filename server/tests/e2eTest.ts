@@ -9,6 +9,7 @@ const testUser1 = {
   givenName: "Test",
   familyName: "User",
   email: "user@test.com",
+  isAdmin: false,
 };
 
 beforeAll(async (done) => {

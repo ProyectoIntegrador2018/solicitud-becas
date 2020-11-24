@@ -78,6 +78,7 @@ app.post("/user-log-in", async function (req, res) {
         givenName: payload.given_name,
         familyName: payload.family_name,
         email: payload.email,
+        isAdmin: false,
       },
     });
     res.json(user);
@@ -97,9 +98,38 @@ app.get("/users", async function (req, res) {
 app.get("/users/:id", async function (req, res) {
   try {
     const id = req.params.id;
-    console.log(id);
     const user = await db.User.findByPk(id);
     res.json(user);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(e);
+  }
+});
+
+app.post("/make-admin", async function (req, res) {
+  try {
+    const ids = req.body as [string];
+    const users = await db.User.update(
+      { isAdmin: true },
+      { where: { googleId: ids } }
+    );
+
+    res.json(users);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(e);
+  }
+});
+
+app.delete("/make-admin", async function (req, res) {
+  try {
+    const ids = req.body as [string];
+    const users = await db.User.update(
+      { isAdmin: false },
+      { where: { googleId: ids } }
+    );
+
+    res.json(users);
   } catch (e) {
     console.log(e);
     res.status(500).json(e);

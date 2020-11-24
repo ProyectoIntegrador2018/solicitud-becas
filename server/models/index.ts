@@ -106,3 +106,16 @@ export const db: DB = {
 
 // THIS LINE SHOULD NOT BE COMMITED IF PRODUCTION DATABASE HAS REAL DATA
 sequelize.sync({ force: true });
+
+// this is a way to add mock data straight into the initial database,
+// just make sure to not sync force true in the same run.
+
+// User.sync().then(() => {
+//   User.create({
+//     googleId: "2",
+//     givenName: "Test",
+//     familyName: "User",
+//     email: "user@test.com",
+//     isAdmin: false,
+//   });
+// });

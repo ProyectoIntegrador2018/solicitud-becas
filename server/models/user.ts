@@ -7,6 +7,7 @@ export interface UserAttributes {
   givenName: string;
   familyName: string;
   email: string;
+  isAdmin: boolean;
 }
 
 export interface UserModel extends Model<UserAttributes>, UserAttributes {}
@@ -33,6 +34,11 @@ export function UserFactory(sequelize: Sequelize) {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
     },
   });
 }
