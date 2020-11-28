@@ -42,6 +42,7 @@ const Apollo: React.FC<Props> = ({ children }: Props) => {
   const { authenticated, logout } = useAuth();
 
   const errorLink = onError((error: ErrorResponse) => {
+    console.log(error);
     if (error.networkError) {
       if ('statusCode' in error.networkError) {
         switch (error.networkError.statusCode) {
@@ -51,8 +52,8 @@ const Apollo: React.FC<Props> = ({ children }: Props) => {
           case 401:
             if (authenticated) {
               cache.reset();
-              logout();
             }
+            logout();
             break;
           default:
             console.log(`[Network error]: ${error.networkError}`);

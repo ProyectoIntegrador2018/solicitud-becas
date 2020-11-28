@@ -6,6 +6,7 @@ export interface IApplication {
   name: string;
   convocatoria?: IConvening;
   area?: IArea;
+  areaId: string;
   evaluaciones?: IEvaluation[];
 }
 

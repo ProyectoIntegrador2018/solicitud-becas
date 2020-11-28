@@ -35,6 +35,7 @@
   -webkit-box-shadow: 0px 5px 16px #c2bdbd;
   -moz-box-shadow: 0px 5px 16px #c2bdbd;
   box-shadow: 0px 5px 16px #c2bdbd;
+  height: max-content;
 }
 
 .conveningTableSingle-buttons {

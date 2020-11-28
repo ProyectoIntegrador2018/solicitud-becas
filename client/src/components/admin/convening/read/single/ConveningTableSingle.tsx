@@ -1,45 +1,75 @@
 import React from 'react';
 import MaterialTable from 'material-table';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import tableIcons from '../../../../../utils/table/TableIcons';
 import PrimaryButton from '../../../../buttons/PrimaryButton';
+import Spinner from '../../../../../utils/spinner/Spinner';
+import { GET_CONVENING } from '../../convening.queries';
+import Swal from 'sweetalert2';
+import { useQuery } from '@apollo/react-hooks';
+import { IConvening } from '../../convening.types';
 import './conveningTableSingle.css';
 
 const ConveningTableSingle: React.FC = () => {
   const { pathname } = useLocation();
+  const { conv } = useParams();
 
-  // const { id } = useParams();
-  // get convening with api call
+  const { data, loading } = useQuery(GET_CONVENING, {
+    variables: {
+      id: conv,
+    },
+    fetchPolicy: 'cache-and-network',
+    onError: () => {
+      Swal.fire({
+        title: 'Error cargando convocatoria',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+    },
+  });
 
-  // const areaRows = convening.areas.map(area => {
-  //   return {
-  //     name: area,
-  //     evaluatorsCount: convening.evaluators.reduce(
-  //       (x, evaluator) => x + (evaluator.areas.find(a => area === a) ? 1 : 0),
-  //       0,
-  //     ),
-  //     applicationsCount: convening.applications.reduce(
-  //       (x, app) => x + (app.area === area ? 1 : 0),
-  //       0,
-  //     ),
-  //     evaluations3OrMore: convening.applications.reduce(
-  //       (x, app) => x + (app.area === area && app.evaluations.length > 2 ? 1 : 0),
-  //       0,
-  //     ),
-  //     evaluations3OrLess: convening.applications.reduce(
-  //       (x, app) => x + (app.area === area && app.evaluations.length <= 2 ? 1 : 0),
-  //       0,
-  //     ),
-  //   };
-  // });
+  const convening: IConvening = data ? data.convening : null;
+
+  console.log(convening);
+
+  // const areaRows =
+  //   convening && convening.areas
+  //     ? convening.areas.map(area => {
+  //         return {
+  //           name: area.name,
+  //           evaluatorsCount: convening.evaluadores
+  //             ? convening.evaluadores.reduce(
+  //                 (x, evaluator) => x + (evaluator.areas.find(a => area.id === a.id) ? 1 : 0),
+  //                 0,
+  //               )
+  //             : 0,
+  //           applicationsCount: convening.solicitudes.reduce(
+  //             (x, sol) => x + (sol.areaId === area.id ? 1 : 0),
+  //             0,
+  //           ),
+  //           evaluations3OrMore: convening.solicitudes.reduce(
+  //             (x, sol) => x + (sol.areaId === area.id && convening.evaluaciones.length > 2 ? 1 : 0),
+  //             0,
+  //           ),
+  //           evaluations3OrLess: convening.solicitudes.reduce(
+  //             (x, sol) => x + (sol.areaId === area.id && convening.evaluaciones.length <= 2 ? 1 : 0),
+  //             0,
+  //           ),
+  //         };
+  //       })
+  //     : [];
 
   const areaRows = [];
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="conveningTableSingle-layout">
       <div className="conveningTableSingle-table">
         <MaterialTable
-          title={'CONVENINGS.NAME'}
+          title={convening?.name}
           icons={tableIcons}
           columns={[
             {

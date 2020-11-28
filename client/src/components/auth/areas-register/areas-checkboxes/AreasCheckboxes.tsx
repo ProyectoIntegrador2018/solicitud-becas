@@ -4,14 +4,15 @@ import './areasCheckboxes.css';
 
 interface IProps {
   areas: string[];
+  selectArea: (area: string) => void;
 }
 
 const AreasCheckboxes: React.FC<IProps> = (props: IProps) => {
-  const { areas } = props;
+  const { areas, selectArea } = props;
   return (
     <ul className="areas-checkboxes">
       {areas.map(area => {
-        return <AreaCheckbox area={area} />;
+        return <AreaCheckbox key={area} area={area} selectArea={selectArea} />;
       })}
     </ul>
   );
