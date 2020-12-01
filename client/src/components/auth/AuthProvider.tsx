@@ -17,7 +17,6 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
     admin: false,
     loading: true,
     evaluator: false,
-    convenings: ['Conv1', 'Conv2', 'Conv3'],
   };
 
   const [state, setState] = useState<IAuthState>(initialAuthState);
@@ -28,7 +27,6 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
       authenticated: false,
       admin: false,
       evaluator: false,
-      convenings: [],
       loading: false,
     });
     localStorage.removeItem('accessTokenBecas');
@@ -60,9 +58,9 @@ const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
         setState({
           user: profileObj,
           authenticated: true,
-          admin: true,
+          admin: data.isAdmin,
           loading: false,
-          evaluator: true,
+          evaluator: !data.isAdmin,
           convenings: ['Conv1', 'Conv2', 'Conv3'],
         });
         localStorage.setItem('accessTokenBecas', accessToken);

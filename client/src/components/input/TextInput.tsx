@@ -21,7 +21,13 @@ const TextInput: React.FC<IProps> = (props: IProps) => {
   const { id, placeholder, name = '', type = 'text', size = 's', field, error = '' } = props;
   if (size === 'fat') {
     return (
-      <textarea id={id} className={'text-input text-input--fat'} placeholder={placeholder || ''} />
+      <textarea
+        {...field}
+        id={id}
+        className={'text-input text-input--fat'}
+        name={name}
+        placeholder={placeholder || ''}
+      />
     );
   }
   return (

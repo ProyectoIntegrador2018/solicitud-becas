@@ -30,12 +30,12 @@ const EvaluatorAreas: React.FC<{}> = () => {
 
   const convening: IConvening = data ? data.convening : null;
 
-  const noAreasRegistered = convening
-    ? !convening.evaluadores.find(e => e.email === user.email)
-    : false;
-  // const areas = convening.evaluadores.filter(area => area.)
+  const evaluators = convening && convening.evaluadores ? convening.evaluadores : [];
 
-  const areas = [];
+  const areas =
+    evaluators.length > 0 ? evaluators.find(e => e.userGoogleId === user.googleId).areas : [];
+
+  const noAreasRegistered = areas.length === 0;
 
   if (loading) {
     return <Spinner />;
@@ -51,8 +51,8 @@ const EvaluatorAreas: React.FC<{}> = () => {
         ) : (
           areas.map(a => {
             return (
-              <Link key={a} to={`${pathname}/${a}`}>
-                <button className="evaluatorAreas-option blue-gradient">{a}</button>
+              <Link key={a.pk} to={`${pathname}/${a.pk}`}>
+                <button className="evaluatorAreas-option blue-gradient">{a.name}</button>
               </Link>
             );
           })

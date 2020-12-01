@@ -38,7 +38,9 @@ const EvaluationsTable: React.FC = () => {
     const sum = evaluations.reduce((x, ev) => x + ev.grade, 0);
     return Number((sum / evaluations.length).toFixed());
   };
-  const applications = convening.solicitudes.filter(app => app.areaId === area);
+  const applications = convening
+    ? convening.solicitudes.filter(app => String(app.areaPk) === area)
+    : [];
   const rowsData = applications.map(app => {
     return {
       name: app.name + ' ' + app.id,
@@ -62,7 +64,7 @@ const EvaluationsTable: React.FC = () => {
     <>
       <div className="evaluationsTable-layout">
         <MaterialTable
-          title={convening.name + ' - ' + convening.areas.find(a => a.id === area).name}
+          title={convening.name + ' - ' + convening.areas.find(a => String(a.pk) === area)?.name}
           icons={tableIcons}
           columns={[
             {
@@ -180,7 +182,7 @@ const EvaluationsTable: React.FC = () => {
           handleClose={() => setOpen(false)}
           application={selected.application}
           evaluationIndex={selected.index}
-          convening={convening.name}
+          convening={convening}
         />
       )}
     </>

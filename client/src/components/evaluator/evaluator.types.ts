@@ -4,11 +4,14 @@ import { IArea } from '../admin/convening/convening.types';
 
 export interface IEvaluator extends IGoogleUser {
   areas: IArea[];
-  convening: string;
+  convocatoriaId: string;
+  userGoogleId: string;
+  user: IGoogleUser;
+  id?: string;
 }
 export interface IEvaluation {
   comment: string;
   grade: number;
-  evaluator: IEvaluator;
-  application?: IApplication;
+  evaluadoreId: string;
+  solicitudeId?: string;
 }

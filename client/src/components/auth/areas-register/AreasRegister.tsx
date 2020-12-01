@@ -56,7 +56,7 @@ const AreasRegister: React.FC = () => {
         variables: {
           input: {
             areas: areas.map(a => {
-              return { id: convening.areas.find(ar => ar.name === a).id };
+              return { pk: convening.areas.find(ar => ar.name === a).pk };
             }),
             convocatoriaId: conv,
             userGoogleId: user.googleId,
