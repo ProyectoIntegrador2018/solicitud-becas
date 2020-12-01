@@ -53,16 +53,15 @@ You should ask for access to this tools if you don't have it already:
 - [Github repo](https://github.com/ProyectoIntegrador2018/solicitud-becas)
 - [Backlog](https://trello.com/b/qSQWAmli/project-management)
 - [Heroku](https://dashboard.heroku.com/)
-  The web server and app is hosted in heroku, using the personal account of:
-  Eduardo Hidalgo, but hosting it in any other heroku account shouldn't be hard,
-  if you need assistance hosting it in a different heroku account contact him.
+  The web server and app is hosted in heroku, using the account of: solicitud.de.becasi2t2@gmail.com
 - [Documentation](https://teams.microsoft.com/_#/files/Equipo%201.06%20-%20Dumplings)
 
 ## Development
 
 ### Setup the project
 
-You should only need git and npm (node package manager)
+You should only need git and npm (node package manager), for the backend you
+will also need postgresSQL installed locally in your machine.
 
 1. Clone the repository
 

@@ -1,18 +1,18 @@
 # Table of Contents
 
-1.  [Deployments](#org4bbe4cb)
-    1.  [Heroku details](#org9d93557)
-        1.  [Building](#orgc0f81cd)
-        2.  [Running](#orgbf7dd49)
+1.  [Deployments](#orga728108)
+    1.  [Heroku details](#org489c326)
+        1.  [Building](#org8be48fc)
+        2.  [Running](#orga37a59f)
 
-<a id="org4bbe4cb"></a>
+<a id="orga728108"></a>
 
 # Deployments
 
 Los deployments suceden de manera automática, ya que está sincronizado el repo
 de github con heroku. Cada push a master, creará una nueva versión en heroku y
 provocará un nuevo build en heroku (para más detalles de cómo se buildea la app,
-checa los detalles en [1.1](#org9d93557)).
+checa los detalles en [1.1](#org489c326)).
 
 la aplicación se puede acceder aquí: <https://solicitud-becas.herokuapp.com/> (Si
 es la primera vez que se abre recientemente, tardará un poco en &ldquo;despertar&rdquo;)
@@ -23,11 +23,16 @@ las tablas de la base de datos, para hacerse correctamente, hay que usar las
 migraciones de sequelize
 <https://sequelize.org/master/manual/migrations.html>
 
-<a id="org9d93557"></a>
+En caso de que no sé tenga acceso al repositorio de github (y por lo tanto no sé
+pueda hacer deploy de manera automática por la conexión con este) se puede hacer
+deploy &ldquo;manualmente&rdquo; corriendo \`git push heroku master\`, esto tiggeará un build
+y deployment en heroku.
+
+<a id="org489c326"></a>
 
 ## Heroku details
 
-<a id="orgc0f81cd"></a>
+<a id="org8be48fc"></a>
 
 ### Building
 
@@ -44,7 +49,7 @@ si ya existe) y luego invoca el build script del servidor. en este punto, ya se
 creó un directorio: `node server/server_build` dónde se encuentra todo lo
 necesario para correr.
 
-<a id="orgbf7dd49"></a>
+<a id="orga37a59f"></a>
 
 ### Running
 
