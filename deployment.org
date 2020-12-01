@@ -17,6 +17,11 @@ las tablas de la base de datos, para hacerse correctamente, hay que usar las
 migraciones de sequelize
 [[https://sequelize.org/master/manual/migrations.html]]
 
+En caso de que no sé tenga acceso al repositorio de github (y por lo tanto no sé
+pueda hacer deploy de manera automática por la conexión con este) se puede hacer
+deploy "manualmente" corriendo `git push heroku master`, esto tiggeará un build
+y deployment en heroku.
+
 ** Heroku details
 *** Building
 

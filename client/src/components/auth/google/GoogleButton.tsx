@@ -5,8 +5,9 @@ import './googleButton.css';
 
 // this isn't private necessarily, just a way to uniquely identify
 // the web application, the control panel for this is located in:
-// https://console.developers.google.com/apis/credentials?project=solicitud-becas
-const CLIENT_ID = '401453194268-j77retfhpocjvd3lhrniu3c35asluk9s.apps.googleusercontent.com';
+// https://console.developers.google.com/apis/credentials?project=sistema-solicitud-becas
+
+const CLIENT_ID = '216039231926-jsvj7dkaghqhg09teqv5b31gm6elhk8c.apps.googleusercontent.com';
 
 const GoogleButton: React.FC = () => {
   const { login, logout, authenticated } = useAuth();
