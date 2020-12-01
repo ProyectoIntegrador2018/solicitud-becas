@@ -4,7 +4,9 @@ import { IArea } from '../admin/convening/convening.types';
 
 export interface IEvaluator extends IGoogleUser {
   areas: IArea[];
-  convening: string;
+  convocatoriaId: string;
+  userGoogleId: string;
+  user: IGoogleUser;
 }
 export interface IEvaluation {
   comment: string;
