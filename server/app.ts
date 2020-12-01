@@ -301,12 +301,20 @@ app.post("/convocatorias/:id/solicitudes", async function (req, res) {
 
     const rows = records.slice(1);
 
-    const newSolicitudes = rows.map((r) => ({
-      id: String(r[0]).trim(),
-      name: String(r[1]).trim(),
-      areaId: String(r[2]).trim(),
-      convocatoriaId: id,
-    }));
+    const areas = await db.Area.findAll({
+      where: { convocatoriaId: convocatoria.id },
+    });
+
+    const newSolicitudes = rows.map((r) => {
+      const areaId = String(r[2]).trim();
+      const area = areas.find((a) => a.id == areaId);
+      return {
+        id: String(r[0]).trim(),
+        name: String(r[1]).trim(),
+        areaPk: area?.pk,
+        convocatoriaId: id,
+      };
+    });
 
     try {
       const createdSolicitudes = await db.Solicitud.bulkCreate(newSolicitudes);
