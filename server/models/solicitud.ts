@@ -14,6 +14,7 @@ import { EvaluacionModel } from "./evaluacion";
 export interface SolicitudAttributes {
   id: string;
   name: string;
+  convocatoriaId: string;
 }
 
 export interface SolicitudModel

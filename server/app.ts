@@ -225,11 +225,27 @@ app.get("/convocatorias/:id", async function (req, res) {
 });
 
 app.delete("/convocatorias/:id", async function (req, res) {
-  let id_ = req.params.id as string;
-  let destroyedCount = await db.Convocatoria.destroy({
+  const id_ = req.params.id as string;
+
+  const areasDeleted = await db.Area.destroy({
+    where: { convocatoriaId: id_ },
+  });
+  const solicitudesDeleted = await db.Solicitud.destroy({
+    where: { convocatoriaId: id_ },
+  });
+  const evaluadoresDeleted = await db.Evaluador.destroy({
+    where: { convocatoriaId: id_ },
+  });
+  const convocatoriasDeleted = await db.Convocatoria.destroy({
     where: { id: id_ },
   });
-  res.json({ deleted: destroyedCount });
+
+  res.json({
+    convocatoriasDeleted,
+    areasDeleted,
+    solicitudesDeleted,
+    evaluadoresDeleted,
+  });
 });
 
 // THIS WILL FIRST REMOVE ALL AREAS RELATED TO THIS CONVOCATORIA, THEN IT WILL
@@ -427,7 +443,7 @@ app.post("/assign-evaluador", async function (req, res) {
     const evaluador = req.body;
 
     const newEvaluador = await db.Evaluador.create(evaluador);
-    await newEvaluador.setAreas(evaluador.areas.map((x) => x.id));
+    await newEvaluador.setAreas(evaluador.areas.map((x) => x.pk));
     res.json(newEvaluador);
   } catch (e) {
     console.error(e);
