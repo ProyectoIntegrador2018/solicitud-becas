@@ -55,7 +55,7 @@ const CreateConvening: React.FC = () => {
         icon: 'success',
         confirmButtonText: 'Ok',
       }).then(() => {
-        history.push('/admin/convocatorias/lista');
+        history.push('/admin/convocatorias');
       });
     } catch (e) {
       console.log(e.statusCode);

@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Swal from 'sweetalert2';
-import { useHistory } from 'react-router-dom';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -37,7 +36,6 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
   const [file, setFile] = useState<File>(null);
   const [error, setError] = useState<string>('');
   const [convening, setConvening] = useState(undefined);
-  const history = useHistory();
 
   const { data, loading } = useQuery(GET_CONVENINGS, {
     fetchPolicy: 'cache-and-network',
@@ -121,6 +119,12 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
     [isDragActive, isDragReject, isDragAccept],
   );
 
+  const close = () => {
+    handleClose();
+    setFile(null);
+    setError('');
+  };
+
   const handleSubmit = async () => {
     if (association === AREAS) {
       try {
@@ -137,7 +141,7 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
           icon: 'success',
           confirmButtonText: 'Ok',
         }).then(() => {
-          history.push('/admin/convocatorias/lista');
+          close();
         });
       } catch (e) {
         Swal.fire({
@@ -161,7 +165,7 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
           icon: 'success',
           confirmButtonText: 'Ok',
         }).then(() => {
-          history.push('/admin/convocatorias/lista');
+          close();
         });
       } catch (e) {
         Swal.fire({
@@ -185,7 +189,7 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
           icon: 'success',
           confirmButtonText: 'Ok',
         }).then(() => {
-          history.push('/admin/convocatorias/lista');
+          close();
         });
       } catch (e) {
         Swal.fire({
@@ -202,14 +206,7 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
   }
 
   return (
-    <SpringModal
-      isOpen={isOpen}
-      handleClose={() => {
-        handleClose();
-        setFile(null);
-        setError('');
-      }}
-    >
+    <SpringModal isOpen={isOpen} handleClose={close}>
       <div className="associateModal">
         <h3>Administrador</h3>
         <h2>Asociar {associationToString(association)} a convocatoria</h2>
@@ -248,21 +245,12 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
           {error && <span>{error}</span>}
         </div>
         <div className="associateModal-buttons">
-          <SecondaryButton
-            text="Cancelar"
-            handleClick={() => {
-              handleClose();
-              setFile(null);
-              setError('');
-            }}
-          />
+          <SecondaryButton text="Cancelar" handleClick={close} />
           <PrimaryButton
             text="Asociar"
             handleClick={() => {
               handleSubmit().then(() => {
-                handleClose();
-                setFile(null);
-                setError('');
+                close();
               });
             }}
             disabled={!file || !convening}

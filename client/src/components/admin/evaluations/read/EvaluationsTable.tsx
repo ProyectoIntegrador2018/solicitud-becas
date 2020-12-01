@@ -1,57 +1,68 @@
 import React, { useState } from 'react';
 import MaterialTable from 'material-table';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
+import Swal from 'sweetalert2';
+import { IConvening } from '../../convening/convening.types';
+import { GET_CONVENING } from '../../convening/convening.queries';
 import tableIcons from '../../../../utils/table/TableIcons';
 import PrimaryButton from '../../../buttons/PrimaryButton';
 import EvaluationModal from '../modal/EvaluationModal';
+import { IEvaluation } from '../../../evaluator/evaluator.types';
+import Spinner from '../../../../utils/spinner/Spinner';
 import './evaluationsTable.css';
 
 const EvaluationsTable: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(null);
 
-  // const { id } = useParams();
-  // get info with api call
+  const { conv, area } = useParams();
 
-  // meanwhile:
-  const convening = {
-    name: 'Conv1 ',
-    evaluationStartDate: new Date(2020, 5, 10),
-    evaluationEndDate: new Date(2020, 5, 12),
-    evaluatorsCount: 3,
-    // evaluators: evals,
-    areasCount: 5,
-    areas: ['Mate', 'Compu', 'Deporte', 'Programacion', 'Arte'],
-    applicationsCount: 5,
-    // applications: apps,
+  const { data, loading } = useQuery(GET_CONVENING, {
+    variables: {
+      id: conv,
+    },
+    fetchPolicy: 'cache-and-network',
+    onError: () => {
+      Swal.fire({
+        title: 'Error cargando convocatoria',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+    },
+  });
+
+  const convening: IConvening = data ? data.convening : null;
+
+  const getAvg = (evaluations: IEvaluation[]) => {
+    const sum = evaluations.reduce((x, ev) => x + ev.grade, 0);
+    return Number((sum / evaluations.length).toFixed());
   };
+  const applications = convening.solicitudes.filter(app => app.areaId === area);
+  const rowsData = applications.map(app => {
+    return {
+      name: app.name + ' ' + app.id,
+      evaluationsCount: app.evaluaciones.length,
+      ev1: app.evaluaciones.length > 0 ? String(app.evaluaciones[0].grade) : null,
+      ev2: app.evaluaciones.length > 1 ? String(app.evaluaciones[1].grade) : null,
+      ev3: app.evaluaciones.length > 2 ? String(app.evaluaciones[2].grade) : null,
+      ev4: app.evaluaciones.length > 3 ? String(app.evaluaciones[3].grade) : null,
+      ev5: app.evaluaciones.length > 4 ? String(app.evaluaciones[4].grade) : null,
+      ev6: app.evaluaciones.length > 5 ? String(app.evaluaciones[5].grade) : null,
+      avg: app.evaluaciones.length > 0 ? getAvg(app.evaluaciones) : null,
+      app: app,
+    };
+  });
 
-  // const getAvg = (evaluations: IEvaluation[]) => {
-  //   const sum = evaluations.reduce((x, ev) => x + ev.grade, 0);
-  //   return Number((sum / evaluations.length).toFixed());
-  // };
-
-  // const rowsData = apps.map(app => {
-  //   return {
-  //     name: app.name + ' ' + app.lastName + ' ' + app.id,
-  //     evaluationsCount: app.evaluations.length,
-  //     ev1: app.evaluations.length > 0 ? String(app.evaluations[0].grade) : null,
-  //     ev2: app.evaluations.length > 1 ? String(app.evaluations[1].grade) : null,
-  //     ev3: app.evaluations.length > 2 ? String(app.evaluations[2].grade) : null,
-  //     ev4: app.evaluations.length > 3 ? String(app.evaluations[3].grade) : null,
-  //     ev5: app.evaluations.length > 4 ? String(app.evaluations[4].grade) : null,
-  //     ev6: app.evaluations.length > 5 ? String(app.evaluations[5].grade) : null,
-  //     avg: app.evaluations.length > 0 ? getAvg(app.evaluations) : null,
-  //     app: app,
-  //   };
-  // });
-
-  const rowsData = [];
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <>
       <div className="evaluationsTable-layout">
         <MaterialTable
-          title={convening.name + '- Mate'}
+          title={convening.name + ' - ' + convening.areas.find(a => a.id === area).name}
           icons={tableIcons}
           columns={[
             {

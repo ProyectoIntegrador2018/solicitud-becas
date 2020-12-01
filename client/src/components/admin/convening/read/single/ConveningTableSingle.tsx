@@ -30,36 +30,33 @@ const ConveningTableSingle: React.FC = () => {
 
   const convening: IConvening = data ? data.convening : null;
 
-  console.log(convening);
-
-  // const areaRows =
-  //   convening && convening.areas
-  //     ? convening.areas.map(area => {
-  //         return {
-  //           name: area.name,
-  //           evaluatorsCount: convening.evaluadores
-  //             ? convening.evaluadores.reduce(
-  //                 (x, evaluator) => x + (evaluator.areas.find(a => area.id === a.id) ? 1 : 0),
-  //                 0,
-  //               )
-  //             : 0,
-  //           applicationsCount: convening.solicitudes.reduce(
-  //             (x, sol) => x + (sol.areaId === area.id ? 1 : 0),
-  //             0,
-  //           ),
-  //           evaluations3OrMore: convening.solicitudes.reduce(
-  //             (x, sol) => x + (sol.areaId === area.id && convening.evaluaciones.length > 2 ? 1 : 0),
-  //             0,
-  //           ),
-  //           evaluations3OrLess: convening.solicitudes.reduce(
-  //             (x, sol) => x + (sol.areaId === area.id && convening.evaluaciones.length <= 2 ? 1 : 0),
-  //             0,
-  //           ),
-  //         };
-  //       })
-  //     : [];
-
-  const areaRows = [];
+  const areaRows =
+    convening && convening.areas
+      ? convening.areas.map(area => {
+          return {
+            id: area.id,
+            name: area.name,
+            evaluatorsCount: convening.evaluadores
+              ? convening.evaluadores.reduce(
+                  (x, evaluator) => x + (evaluator.areas.find(a => area.id === a.id) ? 1 : 0),
+                  0,
+                )
+              : 0,
+            applicationsCount: convening.solicitudes.reduce(
+              (x, sol) => x + (sol.areaId === area.id ? 1 : 0),
+              0,
+            ),
+            evaluations3OrMore: convening.solicitudes.reduce(
+              (x, sol) => x + (sol.areaId === area.id && sol.evaluaciones.length > 2 ? 1 : 0),
+              0,
+            ),
+            evaluations3OrLess: convening.solicitudes.reduce(
+              (x, sol) => x + (sol.areaId === area.id && sol.evaluaciones.length <= 2 ? 1 : 0),
+              0,
+            ),
+          };
+        })
+      : [];
 
   if (loading) {
     return <Spinner />;
@@ -76,7 +73,7 @@ const ConveningTableSingle: React.FC = () => {
               field: 'name',
               title: 'Area',
               render: rowData => (
-                <Link to={`${pathname}/${rowData.name}`}>
+                <Link to={`${pathname}/${rowData.id}`}>
                   <PrimaryButton text={`${rowData.name}`} />
                 </Link>
               ),
