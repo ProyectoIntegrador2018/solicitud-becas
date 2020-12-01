@@ -4,6 +4,7 @@
 import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize";
 
 export interface AreaAttributes {
+  pk?: number;
   id: string;
   name: string;
   // because of the relation
@@ -17,15 +18,33 @@ export type AreaStatic = typeof Model & {
 };
 
 export function AreaFactory(sequelize: Sequelize) {
-  return <AreaStatic>sequelize.define("areas", {
-    id: {
-      type: DataTypes.STRING,
-      primaryKey: true,
-      allowNull: false,
+  return <AreaStatic>sequelize.define(
+    "areas",
+    {
+      pk: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+      },
+      id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  });
+    {
+      // you should not be able to add multiple areas with the same id for a
+      // single convocatoria
+      indexes: [
+        {
+          unique: true,
+          fields: ["convocatoriaId", "id"],
+        },
+      ],
+    }
+  );
 }
