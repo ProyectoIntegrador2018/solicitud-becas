@@ -52,7 +52,7 @@ const EvaluatorAreas: React.FC<{}> = () => {
           areas.map(a => {
             return (
               <Link key={a.pk} to={`${pathname}/${a.pk}`}>
-                <button className="evaluatorAreas-option blue-gradient">{a}</button>
+                <button className="evaluatorAreas-option blue-gradient">{a.name}</button>
               </Link>
             );
           })

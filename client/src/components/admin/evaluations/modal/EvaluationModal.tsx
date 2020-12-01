@@ -15,9 +15,11 @@ interface IProps {
 const EvaluationModal: React.FC<IProps> = (props: IProps) => {
   const { application, isOpen, handleClose, evaluationIndex, convening } = props;
 
-  const { givenName: evName, familyName: evLastName } = application.evaluaciones[
-    evaluationIndex
-  ].evaluator;
+  // const { givenName: evName, familyName: evLastName } = application.evaluaciones[
+  //   evaluationIndex
+  // ].evaluadoreId;
+
+  const name = application.evaluaciones[evaluationIndex].evaluadoreId;
 
   const { grade, comment } = application.evaluaciones[evaluationIndex];
 
@@ -31,7 +33,8 @@ const EvaluationModal: React.FC<IProps> = (props: IProps) => {
             <strong> Solicitante:</strong> {application.name}
           </span>
           <span>
-            <strong>Evaluador:</strong> {evName} {evLastName}
+            {/* <strong>Evaluador:</strong> {evName} {evLastName} */}
+            <strong>Evaluador:</strong> {name}
           </span>
         </div>
         <div className="evaluationModal-data">

@@ -24,5 +24,5 @@ export interface IArea {
   name: string;
   solicitudes: IApplication[];
   updatedAt: string;
-  pk: string;
+  pk: number;
 }

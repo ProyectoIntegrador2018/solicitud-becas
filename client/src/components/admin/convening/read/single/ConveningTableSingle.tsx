@@ -34,24 +34,24 @@ const ConveningTableSingle: React.FC = () => {
     convening && convening.areas
       ? convening.areas.map(area => {
           return {
-            id: area.id,
+            pk: area.pk,
             name: area.name,
             evaluatorsCount: convening.evaluadores
               ? convening.evaluadores.reduce(
-                  (x, evaluator) => x + (evaluator.areas.find(a => area.id === a.id) ? 1 : 0),
+                  (x, evaluator) => x + (evaluator.areas.find(a => area.pk === a.pk) ? 1 : 0),
                   0,
                 )
               : 0,
             applicationsCount: convening.solicitudes.reduce(
-              (x, sol) => x + (sol.areaId === area.id ? 1 : 0),
+              (x, sol) => x + (sol.areaPk === area.pk ? 1 : 0),
               0,
             ),
             evaluations3OrMore: convening.solicitudes.reduce(
-              (x, sol) => x + (sol.areaId === area.id && sol.evaluaciones.length > 2 ? 1 : 0),
+              (x, sol) => x + (sol.areaPk === area.pk && sol.evaluaciones.length > 2 ? 1 : 0),
               0,
             ),
             evaluations3OrLess: convening.solicitudes.reduce(
-              (x, sol) => x + (sol.areaId === area.id && sol.evaluaciones.length <= 2 ? 1 : 0),
+              (x, sol) => x + (sol.areaPk === area.pk && sol.evaluaciones.length <= 2 ? 1 : 0),
               0,
             ),
           };
@@ -73,7 +73,7 @@ const ConveningTableSingle: React.FC = () => {
               field: 'name',
               title: 'Area',
               render: rowData => (
-                <Link to={`${pathname}/${rowData.id}`}>
+                <Link to={`${pathname}/${rowData.pk}`}>
                   <PrimaryButton text={`${rowData.name}`} />
                 </Link>
               ),
