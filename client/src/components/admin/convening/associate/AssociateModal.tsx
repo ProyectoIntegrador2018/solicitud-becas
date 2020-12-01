@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Swal from 'sweetalert2';
+import { useHistory } from 'react-router-dom';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -37,8 +38,10 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
   const [error, setError] = useState<string>('');
   const [convening, setConvening] = useState(undefined);
 
+  const history = useHistory();
+
   const { data, loading } = useQuery(GET_CONVENINGS, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
     onError: () => {
       Swal.fire({
         title: 'Error cargando convocatorias',
@@ -141,7 +144,7 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
           icon: 'success',
           confirmButtonText: 'Ok',
         }).then(() => {
-          close();
+          history.go(0);
         });
       } catch (e) {
         Swal.fire({
@@ -151,52 +154,68 @@ const AssociateModal: React.FC<IProps> = (props: IProps) => {
         });
       }
     } else if (association === APPLICATIONS) {
-      try {
-        await associateApplications({
-          variables: {
-            input: {
-              files: [file],
-            },
-            id: convening?.id,
-          },
-        });
+      if (convening?.areas.length === 0) {
         Swal.fire({
-          title: `Se han actualizado las solicitudes para la convocatoria ${convening.name}`,
-          icon: 'success',
-          confirmButtonText: 'Ok',
-        }).then(() => {
-          close();
-        });
-      } catch (e) {
-        Swal.fire({
-          title: 'Hubo un error',
+          title: 'Debes primero llenar areas a esta convocatoria.',
           icon: 'error',
           confirmButtonText: 'Ok',
         });
+      } else {
+        try {
+          await associateApplications({
+            variables: {
+              input: {
+                files: [file],
+              },
+              id: convening?.id,
+            },
+          });
+          Swal.fire({
+            title: `Se han actualizado las solicitudes para la convocatoria ${convening.name}`,
+            icon: 'success',
+            confirmButtonText: 'Ok',
+          }).then(() => {
+            history.go(0);
+          });
+        } catch (e) {
+          Swal.fire({
+            title: 'Hubo un error',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+          });
+        }
       }
     } else if (association === EVALUATORS) {
-      try {
-        await associateEvaluators({
-          variables: {
-            input: {
-              files: [file],
-            },
-            id: convening?.id,
-          },
-        });
+      if (convening?.areas.length === 0) {
         Swal.fire({
-          title: `Se han actualizado los evaluadores para la convocatoria ${convening.name}`,
-          icon: 'success',
-          confirmButtonText: 'Ok',
-        }).then(() => {
-          close();
-        });
-      } catch (e) {
-        Swal.fire({
-          title: 'Hubo un error',
+          title: 'Debes primero llenar areas a esta convocatoria.',
           icon: 'error',
           confirmButtonText: 'Ok',
         });
+      } else {
+        try {
+          await associateEvaluators({
+            variables: {
+              input: {
+                files: [file],
+              },
+              id: convening?.id,
+            },
+          });
+          Swal.fire({
+            title: `Se han actualizado los evaluadores para la convocatoria ${convening.name}`,
+            icon: 'success',
+            confirmButtonText: 'Ok',
+          }).then(() => {
+            history.go(0);
+          });
+        } catch (e) {
+          Swal.fire({
+            title: 'Hubo un error',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+          });
+        }
       }
     }
   };
