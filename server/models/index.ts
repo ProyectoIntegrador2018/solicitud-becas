@@ -107,25 +107,20 @@ export const db: DB = {
 };
 
 // THIS LINE SHOULD NOT BE COMMITED IF PRODUCTION DATABASE HAS REAL DATA
-sequelize.sync({ force: true });
+sequelize.sync({ force: true }).then(() => {
+  // this is a way to add initial data straight into the initial database.
 
-// .then(() => {
-//   // this is a way to add mock data straight into the initial database,
-//   // just make sure to not sync force true in the same run.
-
-//   User.create({
-//     googleId: "2",
-//     givenName: "Test",
-//     familyName: "User",
-//     email: "user@test.com",
-//     isAdmin: false,
-//   });
-
-//   User.create({
-//     googleId: "4",
-//     givenName: "Test",
-//     familyName: "User",
-//     email: "user4@test.com",
-//     isAdmin: false,
-//   });
-// });
+  // this is an initial admin account that is required to bootstrap the trust
+  // chain, with this user you can add other admins and so on
+  AuthorizedEmail.create({ email: "solicitud.de.becasi2t2@gmail.com" }).then(
+    (authemail) => {
+      User.create({
+        googleId: "106182996203810407582",
+        familyName: "becas",
+        givenName: "solicitud",
+        email: authemail.email,
+        isAdmin: true,
+      });
+    }
+  );
+});

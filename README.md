@@ -26,7 +26,7 @@ parte del I2T2
 ### Environment URLS
 
 - **Production** - [App hosted in heroku](https://solicitud-becas.herokuapp.com/)
-- **Development** - Development **is** Prod here
+- **Development** - Development is Prod, Prod is Development
 
 ### Equipo: Dumplings
 
@@ -118,19 +118,25 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 #### B. for the back end:
 
+you need to have postgresSQL installed, unfortunately it is not simple to do so,
+so I can't explain it in this manual. It also depends on the operating system,
+so check postgresSQL homepage on how to install it.
+
 in the `server/` project directory, run:
 
-##### `npm start`
+##### `npm run dev`
 
-to run the server locally
+to run the server locally and watch for changes.
 
 ### Database management
 
-to be determined
+The Database is a PostgreSQL instance running as a service in Heroku, if you
+need to change the schema and there's already data then a migration should be
+done with [sequelize migrations](https://sequelize.org/master/manual/migrations.html)
 
 ### Debugging
 
-to be determined
+- if it is logged by the backend during development,
 
 ## Git Protocol
 
