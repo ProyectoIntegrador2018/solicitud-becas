@@ -107,7 +107,7 @@ export const db: DB = {
 };
 
 // THIS LINE SHOULD NOT BE COMMITED IF PRODUCTION DATABASE HAS REAL DATA
-sequelize.sync({ force: true });
+// sequelize.sync({ force: true });
 
 // .then(() => {
 //   // this is a way to add mock data straight into the initial database,
