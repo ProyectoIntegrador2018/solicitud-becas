@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Formik, Form, Field } from 'formik';
-import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks/lib/useMutation';
 import { IApplication } from '../../admin/applications/applications.types';
 import PrimaryButton from '../../buttons/PrimaryButton';
@@ -30,7 +29,6 @@ const EvaluateModal: React.FC<IProps> = (props: IProps) => {
   const [error, setError] = useState<string>('');
 
   const { user } = useAuth();
-  const history = useHistory();
 
   const { givenName, familyName } = user;
 
@@ -84,8 +82,6 @@ const EvaluateModal: React.FC<IProps> = (props: IProps) => {
         title: `Se ha ingresado la evaluación`,
         icon: 'success',
         confirmButtonText: 'Ok',
-      }).then(() => {
-        history.go(0);
       });
     } catch (e) {
       console.log(e.statusCode);

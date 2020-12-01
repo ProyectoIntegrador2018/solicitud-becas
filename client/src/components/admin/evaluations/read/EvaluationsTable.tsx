@@ -182,7 +182,7 @@ const EvaluationsTable: React.FC = () => {
           handleClose={() => setOpen(false)}
           application={selected.application}
           evaluationIndex={selected.index}
-          convening={convening.name}
+          convening={convening}
         />
       )}
     </>

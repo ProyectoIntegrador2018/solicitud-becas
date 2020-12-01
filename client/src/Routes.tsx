@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react';
-import { Switch } from 'react-router-dom';
+import { Switch, Redirect } from 'react-router-dom';
 import PublicRoute from './utils/router/PublicRoute';
 import Login from './components/auth/login/Login';
 import useAuth from './utils/hooks/useAuth';
-import Home from './components/homepage/Home';
-import PrivateRoute from './utils/router/PrivateRoute';
 import EvaluatorRoute from './utils/router/EvaluatorRoute';
 import Evaluator from './components/evaluator/Evaluator';
 import Admin from './components/admin/Admin';
 import AdminRoute from './utils/router/AdminRoute';
 
 const Routes: React.FC = () => {
-  const { fetchSession, logout, setState } = useAuth();
+  const { fetchSession, logout, setState, admin } = useAuth();
 
   useEffect(() => {
     const at = localStorage.getItem('accessTokenBecas');
@@ -27,8 +25,8 @@ const Routes: React.FC = () => {
           setState({
             user: data,
             authenticated: true,
-            admin: true,
-            evaluator: true,
+            admin: data.isAdmin,
+            evaluator: !data.isAdmin,
             loading: false,
           });
         })
@@ -46,7 +44,7 @@ const Routes: React.FC = () => {
       <PublicRoute path="/iniciar-sesion" component={Login} />
       <EvaluatorRoute path="/evaluador" component={Evaluator} />
       <AdminRoute path="/admin" component={Admin} />
-      <PrivateRoute path="/" component={Home} />
+      <Redirect from="/*" to={admin ? '/admin/' : '/evaluador/'} />
     </Switch>
   );
 };
