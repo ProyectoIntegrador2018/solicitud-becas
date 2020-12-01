@@ -349,10 +349,16 @@ app.post("/solicitudes/:id/evaluacion", async function (req, res) {
     const solicitud = await db.Solicitud.findByPk(id, {
       include: [db.Evaluacion],
     });
-    const evaluacion = await db.Evaluacion.create(req.body);
+    const evaluacion = await db.Evaluacion.create(req.body, {
+      include: [db.Evaluador],
+    });
     await solicitud?.addEvaluacione(evaluacion);
 
-    res.json(evaluacion);
+    const evaluador = await db.Evaluador.findByPk(evaluacion.evaluadoreId, {
+      include: [db.User],
+    });
+
+    res.json({ evaluacion, evaluador });
   } catch (e) {
     console.error(e);
     res.status(500); // Internal Server Error
@@ -435,7 +441,7 @@ app.post("/assign-evaluador", async function (req, res) {
   // {
   // convocatoriaId: string,
   // userGoogleId: string,
-  // areas: [{ id: "Q" }]
+  // areas: [{ pk: 3 }]
   // }
   // and will create a new "Evaluador" object that relates a user with a
   // convocatoria, along with the areas assigned to it

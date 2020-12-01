@@ -7,6 +7,7 @@ export interface EvaluacionAttributes {
   id: number;
   grade: number;
   comment: string;
+  evaluadoreId: number;
 }
 
 export interface EvaluacionModel
